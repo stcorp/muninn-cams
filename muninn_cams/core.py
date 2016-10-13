@@ -16,13 +16,10 @@ _CAMS_MODELS = [ "0001", "fkya", "fnyp", "fsd7", "g4e2", "gvo2", "geuh", "gjjh" 
 
 FILENAME_FMT = re.compile(r'(?P<model>[^-]+)-(?P<val_start>[0-8T]+)-(?P<val_stop>[0-8T]+)\.grib')
 
-def identify_cams(filename):
-    match = FILENAME_FMT.match(filename)
-    return match and match.group('model') in _CAMS_MODELS
-
 class CAMSProduct(object):
 
-    def __init__(self, product_type):
+    def __init__(self, model, product_type):
+        self.model = model
         self.product_type = product_type
 
     @property
@@ -46,7 +43,9 @@ class CAMSProduct(object):
 
     def identify(self, paths):
         filename = os.path.basename(paths[0])
-        return identify_cams(filename)
+        match = FILENAME_FMT.match(filename)
+
+        return match and match.group('model') == self.model
 
     def analyze(self, paths):
         # init the metadata structs
@@ -68,13 +67,13 @@ class CAMSProduct(object):
 
         return metadata
 
-_product_types = [
-    CAMS_PRODUCT_TYPE % { "model": m } for m in _CAMS_MODELS
-]
+_product_types = dict([
+    (CAMS_PRODUCT_TYPE % { "model": m }, CAMSProduct(m, CAMS_PRODUCT_TYPE % { "model": m })) for m in _CAMS_MODELS
+])
 
 def product_types():
-    return _product_types
+    return _product_types.keys()
 
 def product_type_plugin(product_type):
-    return CAMSProduct(product_type)
+    return _product_types[product_type]
 
