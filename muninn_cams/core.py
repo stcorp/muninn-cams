@@ -14,7 +14,7 @@ DATETIME_FMT = "%Y%m%dT%H%M"
 CAMS_PRODUCT_TYPE = "CAMS-%(model)s"
 _CAMS_MODELS = [ "0001", "fkya", "fnyp", "fsd7", "g4e2", "gvo2", "geuh", "gjjh" ]
 
-FILENAME_FMT = re.compile(r'(?P<model>[^-]+)-(?P<val_start>[0-8T]+)-(?P<val_stop>[0-8T]+)\.grib')
+FILENAME_FMT = re.compile(r'(?P<model>[^-]+)-(?P<val_start>[0-9T]+)-(?P<val_stop>[0-9T]+)\.grib')
 
 class CAMSProduct(object):
 
