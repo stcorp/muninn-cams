@@ -56,7 +56,7 @@ class CAMSProduct(object):
         core.product_name = filename
 
         # properties that can be extracted from path/os
-        core.creation_date = datetime.strptime(match.group('val_start'), DATETIME_FMT)
+        core.creation_date = datetime.strptime(match.group('val_start'), DATETIME_FMT)  #TODO: using val_start is wrong
         core.validity_start = datetime.strptime(match.group('val_start'), DATETIME_FMT)
         core.validity_stop = datetime.strptime(match.group('val_stop'), DATETIME_FMT)
         core.size = os.path.getsize(inpath)
