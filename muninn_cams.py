@@ -1,20 +1,16 @@
 import os
-import os.path as path
 import re
 from datetime import datetime
-
-import logging
 
 from muninn.struct import Struct
 from muninn.exceptions import Error
 
-log = logging.getLogger(__name__)
-
 DATETIME_FMT = "%Y%m%dT%H%M"
 CAMS_PRODUCT_TYPE = "CAMS-%(model)s"
-_CAMS_MODELS = [ "0001", "fkya", "fnyp", "fsd7", "g4e2", "gvo2", "geuh", "gjjh" ]
+_CAMS_MODELS = ["0001", "fkya", "fnyp", "fsd7", "g4e2", "gvo2", "geuh", "gjjh"]
 
 FILENAME_FMT = re.compile(r'(?P<model>[^-]+)-(?P<val_start>[0-9T]+)-(?P<val_stop>[0-9T]+)\.grib')
+
 
 class CAMSProduct(object):
 
@@ -36,9 +32,9 @@ class CAMSProduct(object):
         return os.path.join(
             "CAMS",
             md.product_type,
-            md.creation_date.strftime("%Y"),
-            md.creation_date.strftime("%m"),
-            md.creation_date.strftime("%d")
+            md.validity_start.strftime("%Y"),
+            md.validity_start.strftime("%m"),
+            md.validity_start.strftime("%d")
         )
 
     def identify(self, paths):
@@ -56,24 +52,21 @@ class CAMSProduct(object):
         match = FILENAME_FMT.match(filename)
 
         # populate the metadata
-        metadata.core = core = Struct()
+        core = metadata.core = Struct()
+        core.product_name = filename
 
         # properties that can be extracted from path/os
         core.creation_date = datetime.strptime(match.group('val_start'), DATETIME_FMT)
-        core.product_name = filename
-        core.size = os.path.getsize(inpath)
         core.validity_start = datetime.strptime(match.group('val_start'), DATETIME_FMT)
         core.validity_stop = datetime.strptime(match.group('val_stop'), DATETIME_FMT)
+        core.size = os.path.getsize(inpath)
 
         return metadata
 
-_product_types = dict([
-    (CAMS_PRODUCT_TYPE % { "model": m }, CAMSProduct(m, CAMS_PRODUCT_TYPE % { "model": m })) for m in _CAMS_MODELS
-])
 
 def product_types():
-    return _product_types.keys()
+    return [CAMS_PRODUCT_TYPE % {"model": m} for m in _CAMS_MODELS]
+
 
 def product_type_plugin(product_type):
-    return _product_types[product_type]
-
+    return CAMSProduct(product_type, CAMS_PRODUCT_TYPE % {"model": product_type})
