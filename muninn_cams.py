@@ -12,7 +12,7 @@ from muninn.archive import Archive
 
 class ECMWFMARSNamespace(Mapping):
     # These are mars request paremeters
-    dataset = Text  # Identifier of a dataset; public datasets are listed at http://apps.ecmwf.int/datasets/
+    dataset = optional(Text)  # Dataset identifier from https://software.ecmwf.int/wiki/display/WEBAPI/Available+ECMWF+Public+Datasets
     marsclass = Text  # MARS abbreviation from http://apps.ecmwf.int/codes/grib/format/mars/class/
     stream = Text  # MARS abbreviation from http://apps.ecmwf.int/codes/grib/format/mars/stream/
     expver = Text  # https://software.ecmwf.int/wiki/display/UDOC/Identification+keywords#Identificationkeywords-expver
@@ -425,14 +425,14 @@ def extract_grib_metadata(gribfile):
                 ecmwfmars.time = time
                 if step != 0:
                     ecmwfmars.step = step
-                ecmwfmars.time = time
                 ecmwfmars.marsclass = marsclass
                 ecmwfmars.type = marstype
                 ecmwfmars.stream = stream
                 ecmwfmars.expver = expver
                 if ecmwfmars.marsclass == "mc":
+                    # assume CAMS NRT
                     ecmwfmars.dataset = "cams_nrealtime"
-                else:
+                elif ecmwfmars.marsclass == "ei":
                     ecmwfmars.dataset = "interim"
             coda.cursor_goto_parent(cursor)
             if i < num_messages - 1:
@@ -446,7 +446,7 @@ class ECMWFMARSProduct(object):
     def archive_path(self, properties):
         date = properties.core.creation_date
         mars = properties.ecmwfmars
-        return os.path.join("ECMWF", mars.dataset, mars.stream, mars.expver, mars.type,
+        return os.path.join("ECMWF", mars.stream, mars.expver, mars.type,
                             "%04d" % date.year, "%02d" % date.month, "%02d" % date.day)
 
     def get_remote_url(self, filename, ecmwfmars, levtype_options={}):
@@ -458,6 +458,8 @@ class ECMWFMARSProduct(object):
              https://software.ecmwf.int/wiki/display/UDOC/Identification+keywords#Identificationkeywords-levelist
         """
 
+        if 'dataset' not in ecmwfmars:
+            raise Error("no 'dataset' property available to construct remote_url")
         if len(levtype_options) == 0:
             raise Error("no parameters to construct remote_url")
 
@@ -529,7 +531,7 @@ class ECMWFMARSProduct(object):
         core.validity_stop = core.validity_start
         # the creation date is set to the base time of the model
         core.creation_date = date
-        if len(levtype_options) > 0:
+        if 'dataset' in ecmwfmars and len(levtype_options) > 0:
             core.remote_url = self.get_remote_url(core.physical_name, ecmwfmars, levtype_options)
         return core
 
@@ -570,7 +572,8 @@ class CAMSProduct(ECMWFMARSProduct):
         core.physical_name = "%s.grib" % (core.product_name,)
         return core
 
-    def create_properties(self, date, expver="0001", type="an", step=0, grid="F256", sfc_param=[], ml_param=[]):
+    def create_properties(self, date, expver="0001", type="an", step=0, grid="F256", sfc_param=[], ml_param=[],
+                          levelist=range(60)):
         if isinstance(date, datetime.date):
             date = datetime.datetime(date.year, date.month, date.day)
 
@@ -581,7 +584,7 @@ class CAMSProduct(ECMWFMARSProduct):
         ecmwfmars.expver = expver
         ecmwfmars.type = type
         ecmwfmars.date = date.strftime("%Y%m%d")
-        ecmwfmars.time = date.strftime("%H%M")
+        ecmwfmars.time = date.strftime("%H%M00")
         if step is not 0:
             ecmwfmars.step = step
         ecmwfmars.grid = grid
@@ -593,7 +596,7 @@ class CAMSProduct(ECMWFMARSProduct):
             if '152.128' not in ml_param:
                 # Make sure that the surface pressure is included
                 ml_param += ['152.128']  # Logarithm of surface pressure (lnsp)
-            levtype_options['ml'] = {'param': "/".join(ml_param), 'levelist': "/".join([str(x+1) for x in range(60)])}
+            levtype_options['ml'] = {'param': "/".join(ml_param), 'levelist': "/".join([str(x+1) for x in levelist])}
 
         metadata = Struct()
         metadata.core = self._get_core_properties(ecmwfmars, levtype_options)
@@ -629,7 +632,7 @@ class BIRACAMSProduct(CAMSProduct):
         ecmwfmars.expver = filename[:4]
         ecmwfmars.stream = "oper"
         ecmwfmars.date = filename[5:13]
-        ecmwfmars.time = filename[14:18]
+        ecmwfmars.time = filename[14:18] + "00"
         step = datetime.datetime.strptime(filename[19:32], "%Y%m%dT%H%M") - \
             datetime.datetime.strptime(filename[5:18], "%Y%m%dT%H%M")
         step = step.total_seconds()
