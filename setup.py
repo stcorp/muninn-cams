@@ -2,6 +2,7 @@ from setuptools import setup
 
 setup(
     name='muninn-cams',
-    version='0.1.0',
+    version='1.0',
+    license="BSD",
     py_modules=['muninn_cams'],
 )
