@@ -1,5 +1,5 @@
-from __future__ import absolute_import, division, print_function
 import os
+import re
 import datetime
 
 from muninn.struct import Struct
@@ -224,8 +224,7 @@ class CAMSProduct(object):
         self.filename_pattern = "_".join(pattern) + r"\.grib"
 
     def parse_filename(self, filename):
-        filename = os.path.basename(filename)
-        match = re.match(self.filename_pattern, filename)
+        match = re.match(self.filename_pattern, os.path.basename(filename))
         if match:
             return match.groupdict()
         return None
@@ -233,8 +232,7 @@ class CAMSProduct(object):
     def identify(self, paths):
         if len(paths) != 1:
             return False
-        name_attrs = self.parse_filename(os.path.basename(paths[0]))
-        return name_attrs is not None
+        return re.match(self.filename_pattern, os.path.basename(paths[0])) is not None
 
     def archive_path(self, properties):
         date = properties.core.creation_date
