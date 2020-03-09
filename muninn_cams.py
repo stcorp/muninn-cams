@@ -221,7 +221,7 @@ class CAMSProduct(object):
             r"(?P<type>%s)" % exp_type,
             r"(?P<step>.{3})"
         ]
-        self.filename_pattern = "_".join(pattern) + r"\.grib"
+        self.filename_pattern = "_".join(pattern) + r"\.grib$"
 
     def parse_filename(self, filename):
         match = re.match(self.filename_pattern, os.path.basename(filename))
