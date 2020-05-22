@@ -7,26 +7,27 @@ from muninn_ecmwfmars import get_core_properties as get_ecmwfmars_core_propertie
 
 
 PRODUCT_TYPE_BASE = 'cams'
-MC_EXP_NAMES = ['0001']  # marsclass="mc"
+
 CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4']
 ESUITE_EXP_NAMES = ['h2xm']
+EXP_NAMES = ['0001'] + CONTROL_EXP_NAMES + ESUITE_EXP_NAMES
+
 GHG_AN_EXP_NAMES = ['gqiq', 'gwx3', 'h72g']
 GHG_FC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp']
 GHG_EXP_NAMES = GHG_AN_EXP_NAMES + GHG_FC_EXP_NAMES
+
+MC_EXP_NAMES = ['0001']  # marsclass="mc"
 RD_EXP_NAMES = CONTROL_EXP_NAMES + ESUITE_EXP_NAMES + GHG_EXP_NAMES  # marsclass="rd"
-EXP_NAMES = MC_EXP_NAMES + RD_EXP_NAMES
 EXP_TYPES = ['fc', 'an']
 
 PRODUCT_TYPES = []
 for _exp_name in EXP_NAMES:
     for _exp_type in EXP_TYPES:
-        if _exp_type == 'fc' and _exp_name in GHG_AN_EXP_NAMES:
-            # Exclude 'fc' from GHG analysis models (even though it exists)
-            continue
-        if _exp_type == 'an' and _exp_name in GHG_FC_EXP_NAMES:
-            # GHG forecast models don't have any 'an' data
-            continue
         PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, _exp_type))
+for _exp_name in GHG_FC_EXP_NAMES:
+    PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, 'fc'))
+for _exp_name in GHG_AN_EXP_NAMES:
+    PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, 'an'))
 
 FILENAME_PATTERN_BASE = PRODUCT_TYPE_BASE + \
     r'_(?P<model>%s)_(?P<creation_date>[\dT]{15})_(?P<type>%s)_(?P<step>.{3})\.grib'
