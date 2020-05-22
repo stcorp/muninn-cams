@@ -10,13 +10,22 @@ PRODUCT_TYPE_BASE = 'cams'
 MC_EXP_NAMES = ['0001']  # marsclass="mc"
 CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4']
 ESUITE_EXP_NAMES = ['h2xm']
-RD_EXP_NAMES = CONTROL_EXP_NAMES + ESUITE_EXP_NAMES  # marsclass="rd"
+GHG_AN_EXP_NAMES = ['gqiq', 'gwx3', 'h72g']
+GHG_FC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp']
+GHG_EXP_NAMES = GHG_AN_EXP_NAMES + GHG_FC_EXP_NAMES
+RD_EXP_NAMES = CONTROL_EXP_NAMES + ESUITE_EXP_NAMES + GHG_EXP_NAMES  # marsclass="rd"
 EXP_NAMES = MC_EXP_NAMES + RD_EXP_NAMES
 EXP_TYPES = ['fc', 'an']
 
 PRODUCT_TYPES = []
 for _exp_name in EXP_NAMES:
     for _exp_type in EXP_TYPES:
+        if _exp_type == 'fc' and _exp_name in GHG_AN_EXP_NAMES:
+            # Exclude 'fc' from GHG analysis models (even though it exists)
+            continue
+        if _exp_type == 'an' and _exp_name in GHG_FC_EXP_NAMES:
+            # GHG forecast models don't have any 'an' data
+            continue
         PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, _exp_type))
 
 FILENAME_PATTERN_BASE = PRODUCT_TYPE_BASE + \
@@ -61,27 +70,44 @@ FC_SFC_PARAM = [
 ]
 
 AN_ML_PARAM = [
-    '4.217',        # Methane
-    '130.128',      # Temperature
-    '133.128',      # Specific humidity
-    '121.210',      # Nitrogen dioxide
-    '122.210',      # Sulphur dioxide
-    '123.210',      # Carbon monoxide
-    '124.210',      # Formaldehyde
-    '203.210',      # GEMS Ozone
+    '4.217',    # Methane
+    '130.128',  # Temperature
+    '133.128',  # Specific humidity
+    '121.210',  # Nitrogen dioxide
+    '122.210',  # Sulphur dioxide
+    '123.210',  # Carbon monoxide
+    '124.210',  # Formaldehyde
+    '203.210',  # GEMS Ozone
 ]
 
 FC_ML_PARAM = [
-    '4.217',        # Methane
-    '130.128',      # Temperature
-    '133.128',      # Specific humidity
-    '121.210',      # Nitrogen dioxide
-    '122.210',      # Sulphur dioxide
-    '123.210',      # Carbon monoxide
-    '124.210',      # Formaldehyde
-    '203.210',      # GEMS Ozone
-    '182.215',      # Aerosol extinction coefficient at 1064 nm
-    '188.215',      # Aerosol backscatter coefficient at 1064 nm (from ground)
+    '4.217',    # Methane
+    '130.128',  # Temperature
+    '133.128',  # Specific humidity
+    '121.210',  # Nitrogen dioxide
+    '122.210',  # Sulphur dioxide
+    '123.210',  # Carbon monoxide
+    '124.210',  # Formaldehyde
+    '203.210',  # GEMS Ozone
+    '182.215',  # Aerosol extinction coefficient at 1064 nm
+    '188.215',  # Aerosol backscatter coefficient at 1064 nm (from ground)
+]
+
+GHG_AN_PARAM = [
+    '129.128',  # Geopotential
+    '130.128',  # Temperature
+    '133.128',  # Specific humidity
+    '61.210',   # Carbon dioxide
+    '62.210',   # Methane
+]
+
+GHG_FC_PARAM = [
+    '129.128',  # Geopotential
+    '130.128',  # Temperature
+    '133.128',  # Specific humidity
+    '123.210',  # Carbon monoxide
+    '61.210',   # Carbon dioxide
+    '62.210',   # Methane
 ]
 
 
@@ -97,6 +123,10 @@ FC_ML_PARAM = [
 # - h7c4 : 2019-07-09T12:00:00 - present (L137 model)
 # e-suite experiments:
 # - h2xm : 2017-01-01T00:00:00 - 2017-06-14T00:00:00(?) (L137 model)
+# GHG experiments (start dates are when e-suite was turned into o-suite) :
+# - gqpe(/gqiq) : 2017-11-01T00:00:00 - 2018-12-01T00:00:00
+# - gznv(/gwx3) : 2018-12-01T00:00:00 - 2019-09-01T00:00:00
+# - h9sp(/h72g) : 2019-09-01T00:00:00 - present
 def exp_available(exp, model_datetime):
     if exp == '0001':
         if model_datetime < datetime.datetime(2016, 6, 21, 12):
@@ -137,19 +167,68 @@ def exp_available(exp, model_datetime):
         if model_datetime > datetime.datetime(2017, 6, 14):
             return False
         return True
+    if exp in ['gqpe', 'gqiq']:
+        if model_datetime < datetime.datetime(2017, 11, 1):
+            return False
+        if model_datetime >= datetime.datetime(2018, 12, 1):
+            return False
+        return True
+    if exp in ['gznv', 'gwx3']:
+        if model_datetime < datetime.datetime(2018, 12, 1):
+            return False
+        if model_datetime >= datetime.datetime(2019, 9, 1):
+            return False
+        return True
+    if exp in ['h9sp', 'h72g']:
+        if model_datetime < datetime.datetime(2019, 9, 1):
+            return False
+        return True
     return False
 
 
-def default_stream_for_exp(exp):
+def marsclass_for_exp(exp):
+    if exp in RD_EXP_NAMES:
+        return 'rd'
+    # the default mars class for CAMS is 'mc' (from 'MACC', which is the old name for 'CAMS')
+    return 'mc'
+
+
+def stream_for_exp(exp):
+    if exp in ['gznv', 'gqpe']:
+        # the first GHG forecast runs used 'lwda', all other GHG runs use 'oper'
+        return 'lwda'
     if exp == 'gzhy':
+        # this control run was not using the default stream
         return 'lwda'
     return 'oper'
 
 
+def default_grid_for_exp(exp):
+    if exp in GHG_AN_EXP_NAMES:
+        return 'F200'
+    if exp in GHG_FC_EXP_NAMES:
+        return 'F640'
+    return 'F256'
+
+
 def default_levelist_for_exp(exp, model_datetime):
+    if exp in GHG_EXP_NAMES:
+        return range(137)
     if model_datetime > datetime.datetime(2019, 7, 9) or exp == 'h2xm':
         return range(137)
     return range(60)
+
+
+def default_param_for_exp(exp, type):
+    if exp in GHG_AN_EXPNAMES:
+        return None, GHG_AN_PARAM
+    if exp in GHG_FC_EXPNAMES:
+        return None, GHG_FC_PARAM
+    if type == 'an':
+        return AN_SFC_PARAM, AN_ML_PARAM
+    if type == 'fc':
+        return FC_SFC_PARAM, FC_ML_PARAM
+    return None, None
 
 
 def get_core_properties(product_type, ecmwfmars, levtype_options):
@@ -169,15 +248,19 @@ def get_core_properties(product_type, ecmwfmars, levtype_options):
     return core
 
 
-def create_properties(date, marsclass="mc", stream=None, expver="0001", type="fc", step=0, grid="F256",
-                      sfc_param=None, ml_param=None, levelist=None):
-    if stream is None:
-        stream = default_stream_for_exp(expver)
+def create_properties(date, expver="0001", type="fc", step=0, grid=None, sfc_param=None, ml_param=None, levelist=None):
     product_type = '%s_%s_%s' % (PRODUCT_TYPE_BASE, expver, type)
 
+    marsclass = marsclass_for_exp(expver)
+    stream = stream_for_exp(expver)
+    if grid is None:
+        grid = default_grid_for_exp(expver)
     if isinstance(date, datetime.date) and not isinstance(date, datetime.datetime):
         date = datetime.datetime(date.year, date.month, date.day)
-    levelist = levelist or default_levelist_for_exp(expver, date)
+    if levelist is None:
+        levelist = default_levelist_for_exp(expver, date)
+    if sfc_param is None and ml_param is None:
+        sfc_param, ml_param is default_param_for_exp(expver, type)
 
     # don't set ecmwfmars.dataset, we always use the mars interface to get the parameters
     ecmwfmars = Struct()
