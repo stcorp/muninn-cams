@@ -221,9 +221,9 @@ def default_levelist_for_exp(exp, model_datetime):
 
 
 def default_param_for_exp(exp, type):
-    if exp in GHG_AN_EXPNAMES:
+    if exp in GHG_AN_EXP_NAMES:
         return None, GHG_AN_PARAM
-    if exp in GHG_FC_EXPNAMES:
+    if exp in GHG_FC_EXP_NAMES:
         return None, GHG_FC_PARAM
     if type == 'an':
         return AN_SFC_PARAM, AN_ML_PARAM
