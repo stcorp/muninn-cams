@@ -72,6 +72,7 @@ FC_SFC_PARAM = [
 
 AN_ML_PARAM = [
     '4.217',    # Methane
+    '27.217',   # Nitrogen monoxide
     '130.128',  # Temperature
     '133.128',  # Specific humidity
     '121.210',  # Nitrogen dioxide
@@ -83,6 +84,7 @@ AN_ML_PARAM = [
 
 FC_ML_PARAM = [
     '4.217',    # Methane
+    '27.217',   # Nitrogen monoxide
     '130.128',  # Temperature
     '133.128',  # Specific humidity
     '121.210',  # Nitrogen dioxide
