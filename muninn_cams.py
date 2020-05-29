@@ -263,7 +263,7 @@ def create_properties(date, expver="0001", type="fc", step=0, grid=None, sfc_par
     if levelist is None:
         levelist = default_levelist_for_exp(expver, date)
     if sfc_param is None and ml_param is None:
-        sfc_param, ml_param is default_param_for_exp(expver, type)
+        sfc_param, ml_param = default_param_for_exp(expver, type)
 
     # don't set ecmwfmars.dataset, we always use the mars interface to get the parameters
     ecmwfmars = Struct()
