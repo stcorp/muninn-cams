@@ -8,7 +8,7 @@ from muninn_ecmwfmars import get_core_properties as get_ecmwfmars_core_propertie
 
 PRODUCT_TYPE_BASE = 'cams'
 
-CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4']
+CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir']
 ESUITE_EXP_NAMES = ['h2xm']
 EXP_NAMES = ['0001'] + CONTROL_EXP_NAMES + ESUITE_EXP_NAMES
 
@@ -118,12 +118,14 @@ GHG_FC_PARAM = [
 # NRT production stream :
 # - 0001 : 2016-06-21T12:00:00 - present
 #          switch to L137 on 2019-07-09T00:00:00
+#          switch from 46R1 to 47R1 on 2020-10-06
 # Forecast-only experiments :
 # - gjjh : 2016-06-01T00:00:00 - 2017-02-23T12:00:00
 # - gnhb : 2017-01-24T00:00:00 - 2017-09-25T00:00:00
 # - gsyg : 2017-09-26T00:00:00 - 2018-06-25T00:00:00
 # - gzhy : 2018-06-26T00:00:00 - 2019-07-09T00:00:00
-# - h7c4 : 2019-07-09T12:00:00 - present (L137 model)
+# - h7c4 : 2019-07-10T00:00:00 - 2020-10-06T00:00:00 (L137 model)
+# - hdir : 2020-10-07T00:00:00 - present
 # e-suite experiments:
 # - h2xm : 2017-01-01T00:00:00 - 2017-06-14T00:00:00(?) (L137 model)
 # GHG experiments (start dates are when e-suite was turned into o-suite) :
@@ -161,7 +163,13 @@ def exp_available(exp, model_datetime):
             return False
         return True
     if exp == 'h7c4':
-        if model_datetime <= datetime.datetime(2019, 7, 9):
+        if model_datetime < datetime.datetime(2019, 7, 10):
+            return False
+        if model_datetime > datetime.datetime(2020, 10, 6):
+            return False
+        return True
+    if exp == 'hdir':
+        if model_datetime < datetime.datetime(2020, 10, 7):
             return False
         return True
     if exp == 'h2xm':
