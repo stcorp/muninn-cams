@@ -23,6 +23,8 @@ EXP_TYPES = ['fc', 'an']
 PRODUCT_TYPES = []
 for _exp_name in EXP_NAMES:
     for _exp_type in EXP_TYPES:
+        if _exp_name in CONTROL_EXP_NAMES and _exp_type == 'an':
+            continue
         PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, _exp_type))
 for _exp_name in GHG_FC_EXP_NAMES:
     PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, 'fc'))
