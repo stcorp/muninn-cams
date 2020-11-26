@@ -31,9 +31,6 @@ for _exp_name in GHG_FC_EXP_NAMES:
 for _exp_name in GHG_AN_EXP_NAMES:
     PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, 'an'))
 
-FILENAME_PATTERN_BASE = PRODUCT_TYPE_BASE + \
-    r'_(?P<model>%s)_(?P<creation_date>[\dT]{15})_(?P<type>%s)_(?P<step>.{3})\.grib'
-
 AN_SFC_PARAM = [
     '129.128',  # Geopotential
     '73.210',   # PM2.5
