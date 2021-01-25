@@ -9,15 +9,14 @@ from muninn_ecmwfmars import get_core_properties as get_ecmwfmars_core_propertie
 PRODUCT_TYPE_BASE = 'cams'
 
 CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir']
-ESUITE_EXP_NAMES = ['h2xm']
-EXP_NAMES = ['0001'] + CONTROL_EXP_NAMES + ESUITE_EXP_NAMES
+EXP_NAMES = ['0001'] + CONTROL_EXP_NAMES
 
 GHG_AN_EXP_NAMES = ['gqiq', 'gwx3', 'h72g']
 GHG_FC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp']
 GHG_EXP_NAMES = GHG_AN_EXP_NAMES + GHG_FC_EXP_NAMES
 
 MC_EXP_NAMES = ['0001']  # marsclass="mc"
-RD_EXP_NAMES = CONTROL_EXP_NAMES + ESUITE_EXP_NAMES + GHG_EXP_NAMES  # marsclass="rd"
+RD_EXP_NAMES = CONTROL_EXP_NAMES + GHG_EXP_NAMES  # marsclass="rd"
 EXP_TYPES = ['fc', 'an']
 
 PRODUCT_TYPES = []
@@ -116,21 +115,26 @@ GHG_FC_PARAM = [
 # see https://confluence.ecmwf.int/display/COPSRV/Global+production+log+files
 # NRT production stream :
 # - 0001 : 2016-06-21T12:00:00 - present
-#          switch to L137 on 2019-07-09T00:00:00
-#          switch from 46R1 to 47R1 on 2020-10-06
+#          started with CY41R1
+#          switch to CY43R1 on 2017-01-24
+#          switch to CY43R3 on 2017-09-26
+#          switch to CY45R1 on 2018-06-26
+#          switch to CY46R1 on 2019-07-09 (L137)
+#          switch to CY47R1 on 2020-10-06
 # Forecast-only experiments :
-# - gjjh : 2016-06-01T00:00:00 - 2017-02-23T12:00:00
-# - gnhb : 2017-01-24T00:00:00 - 2017-09-25T00:00:00
-# - gsyg : 2017-09-26T00:00:00 - 2018-06-25T00:00:00
-# - gzhy : 2018-06-26T00:00:00 - 2019-07-09T00:00:00
-# - h7c4 : 2019-07-10T00:00:00 - 2020-10-06T00:00:00 (L137 model)
-# - hdir : 2020-10-07T00:00:00 - present
-# e-suite experiments:
-# - h2xm : 2017-01-01T00:00:00 - 2017-06-14T00:00:00(?) (L137 model)
-# GHG experiments (start dates are when e-suite was turned into o-suite) :
-# - gqpe(/gqiq) : 2017-11-01T00:00:00 - 2018-12-01T00:00:00
-# - gznv(/gwx3) : 2018-12-01T00:00:00 - 2019-09-01T00:00:00
-# - h9sp(/h72g) : 2019-09-01T00:00:00 - present
+# - gjjh : 2016-06-01T00:00:00 - 2017-02-23T12:00:00 (CY41R1)
+# - gnhb : 2017-01-24T00:00:00 - 2017-09-25T00:00:00 (CY43R1)
+# - gsyg : 2017-09-26T00:00:00 - 2018-06-25T00:00:00 (CY43R3)
+# - gzhy : 2018-06-26T00:00:00 - 2019-07-09T00:00:00 (CY45R1)
+# - h7c4 : 2019-07-10T00:00:00 - 2020-10-06T00:00:00 (CY46R1)
+# - hdir : 2020-10-07T00:00:00 - present (CY47R1)
+# GHG experiments FC(/AN):
+# - gqpe(/gqiq) : 2017-11-01T00:00:00 - 2018-12-01T00:00:00 (CY43R1)
+# - gznv(/gwx3) : 2018-12-01T00:00:00 - 2019-09-01T00:00:00 (CY45R1)
+# - h9sp(/h72g) : 2019-09-01T00:00:00 - present (CY46R1)
+# - he9h(/hd7v) : 2020-11-01T00:00:00 - present (CY47R1)
+# GHG forecast-only experiments :
+# - he9e : 2020-11-01T00:00:00 - present (CY47R1)
 def exp_available(exp, model_datetime):
     if exp == '0001':
         if model_datetime < datetime.datetime(2016, 6, 21, 12):
@@ -171,12 +175,6 @@ def exp_available(exp, model_datetime):
         if model_datetime < datetime.datetime(2020, 10, 7):
             return False
         return True
-    if exp == 'h2xm':
-        if model_datetime < datetime.datetime(2017, 1, 1):
-            return False
-        if model_datetime > datetime.datetime(2017, 6, 14):
-            return False
-        return True
     if exp in ['gqpe', 'gqiq']:
         if model_datetime < datetime.datetime(2017, 11, 1):
             return False
@@ -191,6 +189,14 @@ def exp_available(exp, model_datetime):
         return True
     if exp in ['h9sp', 'h72g']:
         if model_datetime < datetime.datetime(2019, 9, 1):
+            return False
+        return True
+    if exp in ['he9h', 'hd7v']:
+        if model_datetime < datetime.datetime(2020, 11, 1):
+            return False
+        return True
+    if exp == 'he9e':
+        if model_datetime < datetime.datetime(2020, 11, 1):
             return False
         return True
     return False
