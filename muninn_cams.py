@@ -11,9 +11,10 @@ PRODUCT_TYPE_BASE = 'cams'
 CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir']
 EXP_NAMES = ['0001'] + CONTROL_EXP_NAMES
 
-GHG_AN_EXP_NAMES = ['gqiq', 'gwx3', 'h72g']
-GHG_FC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp']
-GHG_EXP_NAMES = GHG_AN_EXP_NAMES + GHG_FC_EXP_NAMES
+GHG_CONTROL_EXP_NAMES = ['he9e']
+GHG_AN_EXP_NAMES = ['gqiq', 'gwx3', 'h72g', 'hd7v']
+GHG_FC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp', 'he9h']
+GHG_EXP_NAMES = GHG_AN_EXP_NAMES + GHG_FC_EXP_NAMES + GHG_CONTROL_EXP_NAMES
 
 MC_EXP_NAMES = ['0001']  # marsclass="mc"
 RD_EXP_NAMES = CONTROL_EXP_NAMES + GHG_EXP_NAMES  # marsclass="rd"
@@ -113,6 +114,8 @@ GHG_FC_PARAM = [
 
 
 # see https://confluence.ecmwf.int/display/COPSRV/Global+production+log+files
+# A strict time range is the time range of an expirement where that experiment is the primary experiment
+# (and therefore resulting in overlap-free time ranges for a specific set of experiments).
 # NRT production stream :
 # - 0001 : 2016-06-21T12:00:00 - present
 #          started with CY41R1
@@ -122,20 +125,25 @@ GHG_FC_PARAM = [
 #          switch to CY46R1 on 2019-07-09 (L137)
 #          switch to CY47R1 on 2020-10-06
 # Forecast-only experiments :
-# - gjjh : 2016-06-01T00:00:00 - 2017-02-23T12:00:00 (CY41R1)
-# - gnhb : 2017-01-24T00:00:00 - 2017-09-25T00:00:00 (CY43R1)
-# - gsyg : 2017-09-26T00:00:00 - 2018-06-25T00:00:00 (CY43R3)
-# - gzhy : 2018-06-26T00:00:00 - 2019-07-09T00:00:00 (CY45R1)
-# - h7c4 : 2019-07-10T00:00:00 - 2020-10-06T00:00:00 (CY46R1)
-# - hdir : 2020-10-07T00:00:00 - present (CY47R1)
-# GHG experiments FC(/AN):
-# - gqpe(/gqiq) : 2017-11-01T00:00:00 - 2018-12-01T00:00:00 (CY43R1)
-# - gznv(/gwx3) : 2018-12-01T00:00:00 - 2019-09-01T00:00:00 (CY45R1)
-# - h9sp(/h72g) : 2019-09-01T00:00:00 - present (CY46R1)
-# - he9h(/hd7v) : 2020-11-01T00:00:00 - present (CY47R1)
+# - gjjh :                       2016-06-01T00:00:00 - 2017-01-23T00:00:00 (2017-03-26T00:00:00) (CY41R1)
+# - gnhb : (2017-01-10T00:00:00) 2017-01-24T00:00:00 - 2017-09-25T00:00:00 (2017-11-30T00:00:00) (CY43R1)
+# - gsyg : (2017-09-01T00:00:00) 2017-09-26T00:00:00 - 2018-06-25T00:00:00 (2018-08-02T00:00:00) (CY43R3)
+# - gzhy : (2018-06-01T00:00:00) 2018-06-26T00:00:00 - 2019-07-09T00:00:00                       (CY45R1)
+# - h7c4 : (2018-12-01T00:00:00) 2019-07-10T00:00:00 - 2020-10-06T00:00:00                       (CY46R1)
+# - hdir : (2019-10-01T00:00:00) 2020-10-07T00:00:00 - present                                   (CY47R1)
+# GHG forecast experiments :
+# - gqpe : (2017-01-01T00:00:00) 2017-11-01T00:00:00 - 2018-11-30T00:00:00 (2018-12-31T00:00:00) (CY43R1)
+# - gznv : (2018-06-01T00:00:00) 2018-12-01T00:00:00 - 2019-08-31T00:00:00 (2019-21-31T00:00:00) (CY45R1)
+# - h9sp :                       2019-09-01T00:00:00 - 2020-10-31T00:00:00 (present)             (CY46R1)
+# - he9h : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - present                                   (CY47R1)
+# GHG analysis experiments :
+# - gqiq : (2016-12-31T18:00:00) 2017-11-01T00:00:00 - 2018-11-30T18:00:00 (2018-12-28T06:00:00) (CY43R1)
+# - gwx3 : (2017-11-30T18:00:00) 2018-12-01T00:00:00 - 2019-08-31T18:00:00 (2020-01-22T18:00:00) (CY45R1)
+# - h72g : (2018-11-27T18:00:00) 2019-09-01T00:00:00 - 2020-10-31T18:00:00 (present)             (CY46R1)
+# - hd7v : (2019-12-31T18:00:00) 2020-11-01T00:00:00 - present                                   (CY47R1)
 # GHG forecast-only experiments :
-# - he9e : 2020-11-01T00:00:00 - present (CY47R1)
-def exp_available(exp, model_datetime):
+# - he9e : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - present                                   (CY47R1)
+def exp_available(exp, model_datetime, strict=False):
     if exp == '0001':
         if model_datetime < datetime.datetime(2016, 6, 21, 12):
             return False
@@ -143,60 +151,123 @@ def exp_available(exp, model_datetime):
     if exp == 'gjjh':
         if model_datetime < datetime.datetime(2016, 6, 1):
             return False
-        # we stop when gnhb starts in order to prevent having duplicate data for the same date
-        if model_datetime >= datetime.datetime(2017, 1, 24):
+        if strict and model_datetime > datetime.datetime(2017, 1, 23):
+            return False
+        if model_datetime > datetime.datetime(2017, 3, 26):
             return False
         return True
     if exp == 'gnhb':
-        if model_datetime < datetime.datetime(2017, 1, 24):
+        if strict and model_datetime < datetime.datetime(2017, 1, 24):
             return False
-        if model_datetime > datetime.datetime(2017, 9, 25):
+        if model_datetime < datetime.datetime(2017, 1, 10):
+            return False
+        if strict and model_datetime > datetime.datetime(2017, 9, 25):
+            return False
+        if model_datetime > datetime.datetime(2017, 11, 30):
             return False
         return True
     if exp == 'gsyg':
-        if model_datetime < datetime.datetime(2017, 9, 26):
+        if strict and model_datetime < datetime.datetime(2017, 9, 26):
             return False
-        if model_datetime > datetime.datetime(2018, 6, 25):
+        if model_datetime < datetime.datetime(2017, 9, 1):
+            return False
+        if strict and model_datetime > datetime.datetime(2018, 6, 25):
+            return False
+        if model_datetime > datetime.datetime(2018, 8, 2):
             return False
         return True
     if exp == 'gzhy':
-        if model_datetime < datetime.datetime(2018, 6, 26):
+        if strict and model_datetime < datetime.datetime(2018, 6, 26):
+            return False
+        if model_datetime < datetime.datetime(2018, 6, 1):
             return False
         if model_datetime > datetime.datetime(2019, 7, 9):
             return False
         return True
     if exp == 'h7c4':
-        if model_datetime < datetime.datetime(2019, 7, 10):
+        if stict and model_datetime < datetime.datetime(2019, 7, 10):
+            return False
+        if model_datetime < datetime.datetime(2018, 12, 1):
             return False
         if model_datetime > datetime.datetime(2020, 10, 6):
             return False
         return True
     if exp == 'hdir':
-        if model_datetime < datetime.datetime(2020, 10, 7):
+        if strict and model_datetime < datetime.datetime(2020, 10, 7):
+            return False
+        if model_datetime < datetime.datetime(2019, 10, 1):
             return False
         return True
-    if exp in ['gqpe', 'gqiq']:
-        if model_datetime < datetime.datetime(2017, 11, 1):
+    if exp == 'gqpe':
+        if strict and model_datetime < datetime.datetime(2017, 11, 1):
             return False
-        if model_datetime >= datetime.datetime(2018, 12, 1):
+        if model_datetime < datetime.datetime(2017, 1, 1):
             return False
-        return True
-    if exp in ['gznv', 'gwx3']:
-        if model_datetime < datetime.datetime(2018, 12, 1):
+        if strict and model_datetime > datetime.datetime(2018, 11, 30):
             return False
-        if model_datetime >= datetime.datetime(2019, 9, 1):
+        if model_datetime > datetime.datetime(2018, 12, 31):
             return False
         return True
-    if exp in ['h9sp', 'h72g']:
+    if exp == 'gznv':
+        if strict and model_datetime < datetime.datetime(2018, 12, 1):
+            return False
+        if model_datetime < datetime.datetime(2018, 6, 1):
+            return False
+        if strict and model_datetime > datetime.datetime(2019, 8, 31):
+            return False
+        if model_datetime > datetime.datetime(2019, 12, 31):
+            return False
+        return True
+    if exp == 'h9sp':
         if model_datetime < datetime.datetime(2019, 9, 1):
             return False
+        if strict and model_datetime > datetime.datetime(2020, 10, 31):
+            return False
         return True
-    if exp in ['he9h', 'hd7v']:
-        if model_datetime < datetime.datetime(2020, 11, 1):
+    if exp == 'he9h':
+        if strict and model_datetime < datetime.datetime(2020, 11, 1):
+            return False
+        if model_datetime < datetime.datetime(2020, 1, 1):
+            return False
+        return True
+    if exp == 'gqiq':
+        if strict and model_datetime < datetime.datetime(2017, 11, 1):
+            return False
+        if model_datetime < datetime.datetime(2016, 12, 31, 18):
+            return False
+        if strict and model_datetime > datetime.datetime(2018, 11, 30, 18):
+            return False
+        if model_datetime > datetime.datetime(2018, 12, 28, 6):
+            return False
+        return True
+    if exp == 'gwx3':
+        if strict and model_datetime < datetime.datetime(2018, 12, 1):
+            return False
+        if model_datetime < datetime.datetime(2017, 11, 30, 18):
+            return False
+        if strict and model_datetime > datetime.datetime(2019, 8, 31, 18):
+            return False
+        if model_datetime > datetime.datetime(2020, 1, 22):
+            return False
+        return True
+    if exp == 'h72g':
+        if strict and model_datetime < datetime.datetime(2019, 9, 1):
+            return False
+        if model_datetime < datetime.datetime(2018, 11, 27, 18):
+            return False
+        if strict and model_datetime > datetime.datetime(2020, 10, 31, 18):
+            return False
+        return True
+    if exp == 'hd7v':
+        if strict and model_datetime < datetime.datetime(2020, 11, 1):
+            return False
+        if model_datetime < datetime.datetime(2019, 12, 31, 18):
             return False
         return True
     if exp == 'he9e':
-        if model_datetime < datetime.datetime(2020, 11, 1):
+        if strict and model_datetime < datetime.datetime(2020, 11, 1):
+            return False
+        if model_datetime < datetime.datetime(2020, 1, 1):
             return False
         return True
     return False
@@ -220,7 +291,7 @@ def stream_for_exp(exp):
 
 
 def default_grid_for_exp(exp):
-    if exp in GHG_AN_EXP_NAMES:
+    if exp in GHG_AN_EXP_NAMES or exp in GHG_CONTROL_EXP_NAMES:
         return 'F200'
     if exp in GHG_FC_EXP_NAMES:
         return 'F640'
@@ -238,7 +309,7 @@ def default_levelist_for_exp(exp, model_datetime):
 def default_param_for_exp(exp, type):
     if exp in GHG_AN_EXP_NAMES:
         return None, GHG_AN_PARAM
-    if exp in GHG_FC_EXP_NAMES:
+    if exp in GHG_FC_EXP_NAMES or exp in GHG_CONTROL_EXP_NAMES:
         return None, GHG_FC_PARAM
     if type == 'an':
         return AN_SFC_PARAM, AN_ML_PARAM
