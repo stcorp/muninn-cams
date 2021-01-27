@@ -185,7 +185,7 @@ def exp_available(exp, model_datetime, strict=False):
             return False
         return True
     if exp == 'h7c4':
-        if stict and model_datetime < datetime.datetime(2019, 7, 10):
+        if strict and model_datetime < datetime.datetime(2019, 7, 10):
             return False
         if model_datetime < datetime.datetime(2018, 12, 1):
             return False
