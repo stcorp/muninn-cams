@@ -28,6 +28,8 @@ for _exp_name in EXP_NAMES:
         PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, _exp_type))
 for _exp_name in GHG_FC_EXP_NAMES:
     PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, 'fc'))
+for _exp_name in GHG_CONTROL_EXP_NAMES:
+    PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, 'fc'))
 for _exp_name in GHG_AN_EXP_NAMES:
     PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, 'an'))
 
