@@ -384,6 +384,7 @@ class CAMSProduct(object):
     def __init__(self, product_type):
         self.use_enclosing_directory = False
         self.use_hash = False
+        self.hash_type = None
         self.product_type = product_type
         _, model, exp_type = product_type.split('_')
         pattern = [
