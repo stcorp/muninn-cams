@@ -136,12 +136,12 @@ GHG_FC_PARAM = [
 # GHG forecast experiments :
 # - gqpe : (2017-01-01T00:00:00) 2017-11-01T00:00:00 - 2018-11-30T00:00:00 (2018-12-31T00:00:00) (CY43R1)
 # - gznv : (2018-06-01T00:00:00) 2018-12-01T00:00:00 - 2019-08-31T00:00:00 (2019-21-31T00:00:00) (CY45R1)
-# - h9sp :                       2019-09-01T00:00:00 - 2020-10-31T00:00:00 (present)             (CY46R1)
+# - h9sp :                       2019-09-01T00:00:00 - 2020-10-31T00:00:00 (2021-01-26T00:00:00) (CY46R1)
 # - he9h : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - present                                   (CY47R1)
 # GHG analysis experiments :
 # - gqiq : (2016-12-31T18:00:00) 2017-11-01T00:00:00 - 2018-11-30T18:00:00 (2018-12-28T06:00:00) (CY43R1)
 # - gwx3 : (2017-11-30T18:00:00) 2018-12-01T00:00:00 - 2019-08-31T18:00:00 (2020-01-22T18:00:00) (CY45R1)
-# - h72g : (2018-11-27T18:00:00) 2019-09-01T00:00:00 - 2020-10-31T18:00:00 (present)             (CY46R1)
+# - h72g : (2018-11-27T18:00:00) 2019-09-01T00:00:00 - 2020-10-31T18:00:00 (2021-01-21T18:00:00) (CY46R1)
 # - hd7v : (2019-12-31T18:00:00) 2020-11-01T00:00:00 - present                                   (CY47R1)
 # GHG forecast-only experiments :
 # - he9e : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - present                                   (CY47R1)
@@ -225,6 +225,8 @@ def exp_available(exp, model_datetime, strict=False):
             return False
         if strict and model_datetime > datetime.datetime(2020, 10, 31):
             return False
+        if model_datetime > datetime.datetime(2021, 1, 26):
+            return False
         return True
     if exp == 'he9h':
         if strict and model_datetime < datetime.datetime(2020, 11, 1):
@@ -249,7 +251,7 @@ def exp_available(exp, model_datetime, strict=False):
             return False
         if strict and model_datetime > datetime.datetime(2019, 8, 31, 18):
             return False
-        if model_datetime > datetime.datetime(2020, 1, 22):
+        if model_datetime > datetime.datetime(2020, 1, 22, 18):
             return False
         return True
     if exp == 'h72g':
@@ -258,6 +260,8 @@ def exp_available(exp, model_datetime, strict=False):
         if model_datetime < datetime.datetime(2018, 11, 27, 18):
             return False
         if strict and model_datetime > datetime.datetime(2020, 10, 31, 18):
+            return False
+        if model_datetime > datetime.datetime(2021, 1, 21, 18):
             return False
         return True
     if exp == 'hd7v':
