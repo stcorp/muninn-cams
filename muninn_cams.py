@@ -355,7 +355,6 @@ def create_properties(date, expver="0001", type="fc", step=0, grid=None, sfc_par
     if sfc_param is None and ml_param is None:
         sfc_param, ml_param = default_param_for_exp(expver, type)
 
-    # don't set ecmwfmars.dataset, we always use the mars interface to get the parameters
     ecmwfmars = Struct()
     ecmwfmars.marsclass = marsclass
     ecmwfmars.stream = stream
@@ -425,9 +424,6 @@ class CAMSProduct(object):
 
     def analyze(self, paths):
         ecmwfmars, levtype_options = extract_grib_metadata(paths[0])
-        if 'dataset' in ecmwfmars:
-            # we always want to use the mars interface to retrieve the data
-            del ecmwfmars.dataset
         properties = Struct()
         properties.core = get_core_properties(self.product_type, ecmwfmars, levtype_options)
         properties.ecmwfmars = ecmwfmars
