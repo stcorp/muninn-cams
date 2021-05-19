@@ -8,7 +8,7 @@ from muninn_ecmwfmars import get_core_properties as get_ecmwfmars_core_propertie
 
 PRODUCT_TYPE_BASE = 'cams'
 
-CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir']
+CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b']
 EXP_NAMES = ['0001'] + CONTROL_EXP_NAMES
 
 GHG_CONTROL_EXP_NAMES = ['he9e']
