@@ -126,13 +126,15 @@ GHG_FC_PARAM = [
 #          switch to CY45R1 on 2018-06-26
 #          switch to CY46R1 on 2019-07-09 (L137)
 #          switch to CY47R1 on 2020-10-06
+#          switch to CY47R2 on 2021-05-18
 # Forecast-only experiments :
 # - gjjh :                       2016-06-01T00:00:00 - 2017-01-23T00:00:00 (2017-03-26T00:00:00) (CY41R1)
 # - gnhb : (2017-01-10T00:00:00) 2017-01-24T00:00:00 - 2017-09-25T00:00:00 (2017-11-30T00:00:00) (CY43R1)
 # - gsyg : (2017-09-01T00:00:00) 2017-09-26T00:00:00 - 2018-06-25T00:00:00 (2018-08-02T00:00:00) (CY43R3)
 # - gzhy : (2018-06-01T00:00:00) 2018-06-26T00:00:00 - 2019-07-09T00:00:00                       (CY45R1)
 # - h7c4 : (2018-12-01T00:00:00) 2019-07-10T00:00:00 - 2020-10-06T00:00:00                       (CY46R1)
-# - hdir : (2019-10-01T00:00:00) 2020-10-07T00:00:00 - present                                   (CY47R1)
+# - hdir : (2019-10-01T00:00:00) 2020-10-07T00:00:00 - 2021-05-18T00:00:00                       (CY47R1)
+# - hj7b : (2020-11-01T00:00:00) 2021-05-19T00:00:00 - present                                   (CY47R2)
 # GHG forecast experiments :
 # - gqpe : (2017-01-01T00:00:00) 2017-11-01T00:00:00 - 2018-11-30T00:00:00 (2018-12-31T00:00:00) (CY43R1)
 # - gznv : (2018-06-01T00:00:00) 2018-12-01T00:00:00 - 2019-08-31T00:00:00 (2019-21-31T00:00:00) (CY45R1)
@@ -198,6 +200,14 @@ def exp_available(exp, model_datetime, strict=False):
         if strict and model_datetime < datetime.datetime(2020, 10, 7):
             return False
         if model_datetime < datetime.datetime(2019, 10, 1):
+            return False
+        if model_datetime > datetime.datetime(2021, 5, 18):
+            return False
+        return True
+    if exp == 'hj7b':
+        if strict and model_datetime < datetime.datetime(2021, 5, 19):
+            return False
+        if model_datetime < datetime.datetime(2020, 11, 1):
             return False
         return True
     if exp == 'gqpe':
