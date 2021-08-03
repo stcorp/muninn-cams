@@ -372,7 +372,7 @@ def create_properties(date, expver="0001", type="fc", step=0, grid=None, sfc_par
     ecmwfmars.type = type
     ecmwfmars.date = date.strftime("%Y-%m-%d")
     ecmwfmars.time = date.strftime("%H:%M:%S")
-    if step is not 0:
+    if step != 0:
         ecmwfmars.step = step
     ecmwfmars.grid = grid
 
