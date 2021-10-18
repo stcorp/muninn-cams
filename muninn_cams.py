@@ -8,7 +8,7 @@ from muninn_ecmwfmars import get_core_properties as get_ecmwfmars_core_propertie
 
 PRODUCT_TYPE_BASE = 'cams'
 
-CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b']
+CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b', 'hlqd']
 EXP_NAMES = ['0001'] + CONTROL_EXP_NAMES
 
 GHG_CONTROL_EXP_NAMES = ['he9e']
@@ -127,6 +127,7 @@ GHG_FC_PARAM = [
 #          switch to CY46R1 on 2019-07-09 (L137)
 #          switch to CY47R1 on 2020-10-06
 #          switch to CY47R2 on 2021-05-18
+#          switch to CY47R3 on 2021-10-12T12:00:00
 # Forecast-only experiments :
 # - gjjh :                       2016-06-01T00:00:00 - 2017-01-23T00:00:00 (2017-03-26T00:00:00) (CY41R1)
 # - gnhb : (2017-01-10T00:00:00) 2017-01-24T00:00:00 - 2017-09-25T00:00:00 (2017-11-30T00:00:00) (CY43R1)
@@ -134,7 +135,8 @@ GHG_FC_PARAM = [
 # - gzhy : (2018-06-01T00:00:00) 2018-06-26T00:00:00 - 2019-07-09T00:00:00                       (CY45R1)
 # - h7c4 : (2018-12-01T00:00:00) 2019-07-10T00:00:00 - 2020-10-06T00:00:00                       (CY46R1)
 # - hdir : (2019-10-01T00:00:00) 2020-10-07T00:00:00 - 2021-05-18T00:00:00                       (CY47R1)
-# - hj7b : (2020-11-01T00:00:00) 2021-05-19T00:00:00 - present                                   (CY47R2)
+# - hj7b : (2020-11-01T00:00:00) 2021-05-19T00:00:00 - 2021-10-12T00:00:00                       (CY47R2)
+# - hlqd : (2021-03-02T00:00:00) 2021-10-13T00:00:00 - present                                   (CY47R3)
 # GHG forecast experiments :
 # - gqpe : (2017-01-01T00:00:00) 2017-11-01T00:00:00 - 2018-11-30T00:00:00 (2018-12-31T00:00:00) (CY43R1)
 # - gznv : (2018-06-01T00:00:00) 2018-12-01T00:00:00 - 2019-08-31T00:00:00 (2019-21-31T00:00:00) (CY45R1)
@@ -208,6 +210,14 @@ def exp_available(exp, model_datetime, strict=False):
         if strict and model_datetime < datetime.datetime(2021, 5, 19):
             return False
         if model_datetime < datetime.datetime(2020, 11, 1):
+            return False
+        if model_datetime > datetime.datetime(2021, 10, 12):
+            return False
+        return True
+    if exp == 'hlqd':
+        if strict and model_datetime < datetime.datetime(2021, 10, 13):
+            return False
+        if model_datetime < datetime.datetime(2021, 3, 2):
             return False
         return True
     if exp == 'gqpe':
