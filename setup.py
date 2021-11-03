@@ -5,4 +5,5 @@ setup(
     version='1.0',
     license="BSD",
     py_modules=['muninn_cams'],
+    install_requires=['muninn'],
 )
