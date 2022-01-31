@@ -11,9 +11,9 @@ PRODUCT_TYPE_BASE = 'cams'
 CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b', 'hlqd']
 EXP_NAMES = ['0001'] + CONTROL_EXP_NAMES
 
-GHG_CONTROL_EXP_NAMES = ['he9e']
-GHG_AN_EXP_NAMES = ['gqiq', 'gwx3', 'h72g', 'hd7v']
-GHG_FC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp', 'he9h']
+GHG_CONTROL_EXP_NAMES = ['he9e', 'hllc']
+GHG_AN_EXP_NAMES = ['gqiq', 'gwx3', 'h72g', 'hd7v', 'hlkx']
+GHG_FC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp', 'he9h', 'hlld']
 GHG_EXP_NAMES = GHG_AN_EXP_NAMES + GHG_FC_EXP_NAMES + GHG_CONTROL_EXP_NAMES
 
 MC_EXP_NAMES = ['0001']  # marsclass="mc"
@@ -141,14 +141,17 @@ GHG_FC_PARAM = [
 # - gqpe : (2017-01-01T00:00:00) 2017-11-01T00:00:00 - 2018-11-30T00:00:00 (2018-12-31T00:00:00) (CY43R1)
 # - gznv : (2018-06-01T00:00:00) 2018-12-01T00:00:00 - 2019-08-31T00:00:00 (2019-21-31T00:00:00) (CY45R1)
 # - h9sp :                       2019-09-01T00:00:00 - 2020-10-31T00:00:00 (2021-01-26T00:00:00) (CY46R1)
-# - he9h : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - present                                   (CY47R1)
+# - he9h : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - 2021-10-31T00:00:00 (2021-12-01T00:00:00) (CY47R1)
+# - hlld : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - present                                   (CY47R3)
 # GHG analysis experiments :
 # - gqiq : (2016-12-31T18:00:00) 2017-11-01T00:00:00 - 2018-11-30T18:00:00 (2018-12-28T06:00:00) (CY43R1)
 # - gwx3 : (2017-11-30T18:00:00) 2018-12-01T00:00:00 - 2019-08-31T18:00:00 (2020-01-22T18:00:00) (CY45R1)
 # - h72g : (2018-11-27T18:00:00) 2019-09-01T00:00:00 - 2020-10-31T18:00:00 (2021-01-21T18:00:00) (CY46R1)
-# - hd7v : (2019-12-31T18:00:00) 2020-11-01T00:00:00 - present                                   (CY47R1)
+# - hd7v : (2019-12-31T18:00:00) 2020-11-01T00:00:00 - 2021-10-31T18:00:00 (2021-11-28T18:00:00) (CY47R1)
+# - hlkx : (2021-03-31T18:00:00) 2021-11-01T00:00:00 - present                                   (CY47R3)
 # GHG forecast-only experiments :
-# - he9e : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - present                                   (CY47R1)
+# - he9e : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - 2021-10-31T00:00:00 (2021-11-28T00:00:00) (CY47R1)
+# - hllc : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - present                                   (CY47R3)
 def exp_available(exp, model_datetime, strict=False):
     if exp == '0001':
         if model_datetime < datetime.datetime(2016, 6, 21, 12):
@@ -253,6 +256,16 @@ def exp_available(exp, model_datetime, strict=False):
             return False
         if model_datetime < datetime.datetime(2020, 1, 1):
             return False
+        if strict and model_datetime > datetime.datetime(2021, 10, 31):
+            return False
+        if model_datetime > datetime.datetime(2021, 12, 1):
+            return False
+        return True
+    if exp == 'hlld':
+        if strict and model_datetime < datetime.datetime(2021, 11, 1):
+            return False
+        if model_datetime < datetime.datetime(2021, 4, 1):
+            return False
         return True
     if exp == 'gqiq':
         if strict and model_datetime < datetime.datetime(2017, 11, 1):
@@ -289,11 +302,31 @@ def exp_available(exp, model_datetime, strict=False):
             return False
         if model_datetime < datetime.datetime(2019, 12, 31, 18):
             return False
+        if strict and model_datetime > datetime.datetime(2021, 10, 31, 18):
+            return False
+        if model_datetime > datetime.datetime(2021, 11, 28, 18):
+            return False
+        return True
+    if exp == 'hlkx':
+        if strict and model_datetime < datetime.datetime(2021, 11, 1):
+            return False
+        if model_datetime < datetime.datetime(2021, 3, 31, 18):
+            return False
         return True
     if exp == 'he9e':
         if strict and model_datetime < datetime.datetime(2020, 11, 1):
             return False
         if model_datetime < datetime.datetime(2020, 1, 1):
+            return False
+        if strict and model_datetime > datetime.datetime(2021, 10, 31):
+            return False
+        if model_datetime > datetime.datetime(2021, 11, 28):
+            return False
+        return True
+    if exp == 'hllc':
+        if strict and model_datetime < datetime.datetime(2021, 11, 1):
+            return False
+        if model_datetime < datetime.datetime(2021, 4, 1):
             return False
         return True
     return False
