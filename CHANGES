@@ -1,0 +1,9 @@
+1.1 2022-07-04
+~~~~~~~~~~~~~~~
+
+* Add support for new GHG models (hlkx, hlld, hllc).
+
+1.0 2021-11-03
+~~~~~~~~~~~~~~~~~
+
+* First release.
