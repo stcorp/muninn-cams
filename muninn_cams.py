@@ -8,12 +8,12 @@ from muninn_ecmwfmars import get_core_properties as get_ecmwfmars_core_propertie
 
 PRODUCT_TYPE_BASE = 'cams'
 
-CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b', 'hlqd']
+CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b', 'hlqd', 'ht3q']
 EXP_NAMES = ['0001'] + CONTROL_EXP_NAMES
 
-GHG_CONTROL_EXP_NAMES = ['he9e', 'hllc']
-GHG_AN_EXP_NAMES = ['gqiq', 'gwx3', 'h72g', 'hd7v', 'hlkx']
-GHG_FC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp', 'he9h', 'hlld']
+GHG_CONTROL_EXP_NAMES = ['he9e', 'hllc', 'huet']
+GHG_AN_EXP_NAMES = ['gqiq', 'gwx3', 'h72g', 'hd7v', 'hlkx', 'hues']
+GHG_FC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp', 'he9h', 'hlld', 'hueu']
 GHG_EXP_NAMES = GHG_AN_EXP_NAMES + GHG_FC_EXP_NAMES + GHG_CONTROL_EXP_NAMES
 
 MC_EXP_NAMES = ['0001']  # marsclass="mc"
@@ -128,6 +128,7 @@ GHG_FC_PARAM = [
 #          switch to CY47R1 on 2020-10-06
 #          switch to CY47R2 on 2021-05-18
 #          switch to CY47R3 on 2021-10-12T12:00:00
+#          switch from Cray HPC to Atos HPC on 2022-10-18T12:00:00
 # Forecast-only experiments :
 # - gjjh :                       2016-06-01T00:00:00 - 2017-01-23T00:00:00 (2017-03-26T00:00:00) (CY41R1)
 # - gnhb : (2017-01-10T00:00:00) 2017-01-24T00:00:00 - 2017-09-25T00:00:00 (2017-11-30T00:00:00) (CY43R1)
@@ -136,22 +137,26 @@ GHG_FC_PARAM = [
 # - h7c4 : (2018-12-01T00:00:00) 2019-07-10T00:00:00 - 2020-10-06T00:00:00                       (CY46R1)
 # - hdir : (2019-10-01T00:00:00) 2020-10-07T00:00:00 - 2021-05-18T00:00:00                       (CY47R1)
 # - hj7b : (2020-11-01T00:00:00) 2021-05-19T00:00:00 - 2021-10-12T00:00:00                       (CY47R2)
-# - hlqd : (2021-03-02T00:00:00) 2021-10-13T00:00:00 - present                                   (CY47R3)
+# - hlqd : (2021-03-02T00:00:00) 2021-10-13T00:00:00 - 2022-10-18T00:00:00                       (CY47R3)
+# - ht3q : (2022-04-30T00:00:00) 2022-10-19T00:00:00 - present                                   (CY47R3)
 # GHG forecast experiments :
 # - gqpe : (2017-01-01T00:00:00) 2017-11-01T00:00:00 - 2018-11-30T00:00:00 (2018-12-31T00:00:00) (CY43R1)
 # - gznv : (2018-06-01T00:00:00) 2018-12-01T00:00:00 - 2019-08-31T00:00:00 (2019-21-31T00:00:00) (CY45R1)
 # - h9sp :                       2019-09-01T00:00:00 - 2020-10-31T00:00:00 (2021-01-26T00:00:00) (CY46R1)
 # - he9h : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - 2021-10-31T00:00:00 (2021-12-01T00:00:00) (CY47R1)
-# - hlld : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - present                                   (CY47R3)
+# - hlld : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - 2022-10-23T00:00:00                       (CY47R3)
+# - hueu : (2022-09-19T00:00:00) 2022-10-24T00:00:00 - present                                   (CY47R3)
 # GHG analysis experiments :
 # - gqiq : (2016-12-31T18:00:00) 2017-11-01T00:00:00 - 2018-11-30T18:00:00 (2018-12-28T06:00:00) (CY43R1)
 # - gwx3 : (2017-11-30T18:00:00) 2018-12-01T00:00:00 - 2019-08-31T18:00:00 (2020-01-22T18:00:00) (CY45R1)
 # - h72g : (2018-11-27T18:00:00) 2019-09-01T00:00:00 - 2020-10-31T18:00:00 (2021-01-21T18:00:00) (CY46R1)
 # - hd7v : (2019-12-31T18:00:00) 2020-11-01T00:00:00 - 2021-10-31T18:00:00 (2021-11-28T18:00:00) (CY47R1)
-# - hlkx : (2021-03-31T18:00:00) 2021-11-01T00:00:00 - present                                   (CY47R3)
+# - hlkx : (2021-03-31T18:00:00) 2021-11-01T00:00:00 - 2022-10-23T18:00:00                       (CY47R3)
+# - hues : (2022-09-14T00:00:00) 2022-10-24T00:00:00 - present                                   (CY47R3)
 # GHG forecast-only experiments :
 # - he9e : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - 2021-10-31T00:00:00 (2021-11-28T00:00:00) (CY47R1)
-# - hllc : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - present                                   (CY47R3)
+# - hllc : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - 2022-10-23T00:00:00                       (CY47R3)
+# - huet : (2022-09-15T00:00:00) 2022-10-24T00:00:00 - present                                   (CY47R3)
 def exp_available(exp, model_datetime, strict=False):
     if exp == '0001':
         if model_datetime < datetime.datetime(2016, 6, 21, 12):
@@ -222,6 +227,14 @@ def exp_available(exp, model_datetime, strict=False):
             return False
         if model_datetime < datetime.datetime(2021, 3, 2):
             return False
+        if model_datetime > datetime.datetime(2022, 10, 18):
+            return False
+        return True
+    if exp == 'ht3q':
+        if strict and model_datetime < datetime.datetime(2022, 10, 19):
+            return False
+        if model_datetime < datetime.datetime(2022, 4, 30):
+            return False
         return True
     if exp == 'gqpe':
         if strict and model_datetime < datetime.datetime(2017, 11, 1):
@@ -265,6 +278,16 @@ def exp_available(exp, model_datetime, strict=False):
         if strict and model_datetime < datetime.datetime(2021, 11, 1):
             return False
         if model_datetime < datetime.datetime(2021, 4, 1):
+            return False
+        if strict and model_datetime > datetime.datetime(2022, 10, 23):
+            return False
+        if model_datetime > datetime.datetime(2022, 10, 25):
+            return False
+        return True
+    if exp == 'hueu':
+        if strict and model_datetime < datetime.datetime(2022, 10, 24):
+            return False
+        if model_datetime < datetime.datetime(2022, 9, 19):
             return False
         return True
     if exp == 'gqiq':
@@ -312,6 +335,14 @@ def exp_available(exp, model_datetime, strict=False):
             return False
         if model_datetime < datetime.datetime(2021, 3, 31, 18):
             return False
+        if model_datetime > datetime.datetime(2022, 10, 23, 18):
+            return False
+        return True
+    if exp == 'hues':
+        if strict and model_datetime < datetime.datetime(2022, 10, 24):
+            return False
+        if model_datetime < datetime.datetime(2022, 9, 14, 18):
+            return False
         return True
     if exp == 'he9e':
         if strict and model_datetime < datetime.datetime(2020, 11, 1):
@@ -327,6 +358,14 @@ def exp_available(exp, model_datetime, strict=False):
         if strict and model_datetime < datetime.datetime(2021, 11, 1):
             return False
         if model_datetime < datetime.datetime(2021, 4, 1):
+            return False
+        if model_datetime > datetime.datetime(2022, 10, 23):
+            return False
+        return True
+    if exp == 'huet':
+        if strict and model_datetime < datetime.datetime(2022, 10, 24):
+            return False
+        if model_datetime < datetime.datetime(2022, 9, 15):
             return False
         return True
     return False
