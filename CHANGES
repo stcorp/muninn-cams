@@ -1,7 +1,14 @@
+1.2 2022-11-22
+~~~~~~~~~~~~~~
+
+* Added support for new control model (ht3q).
+
+* Added support for new GHG models (huet, hues, hueu).
+
 1.1 2022-07-04
 ~~~~~~~~~~~~~~~
 
-* Add support for new GHG models (hlkx, hlld, hllc).
+* Added support for new GHG models (hlkx, hlld, hllc).
 
 1.0 2021-11-03
 ~~~~~~~~~~~~~~

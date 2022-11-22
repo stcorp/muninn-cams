@@ -144,18 +144,18 @@ GHG_FC_PARAM = [
 # - gznv : (2018-06-01T00:00:00) 2018-12-01T00:00:00 - 2019-08-31T00:00:00 (2019-21-31T00:00:00) (CY45R1)
 # - h9sp :                       2019-09-01T00:00:00 - 2020-10-31T00:00:00 (2021-01-26T00:00:00) (CY46R1)
 # - he9h : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - 2021-10-31T00:00:00 (2021-12-01T00:00:00) (CY47R1)
-# - hlld : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - 2022-10-23T00:00:00                       (CY47R3)
+# - hlld : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - 2022-10-23T00:00:00 (2022-10-30T00:00:00) (CY47R3)
 # - hueu : (2022-09-19T00:00:00) 2022-10-24T00:00:00 - present                                   (CY47R3)
 # GHG analysis experiments :
 # - gqiq : (2016-12-31T18:00:00) 2017-11-01T00:00:00 - 2018-11-30T18:00:00 (2018-12-28T06:00:00) (CY43R1)
 # - gwx3 : (2017-11-30T18:00:00) 2018-12-01T00:00:00 - 2019-08-31T18:00:00 (2020-01-22T18:00:00) (CY45R1)
 # - h72g : (2018-11-27T18:00:00) 2019-09-01T00:00:00 - 2020-10-31T18:00:00 (2021-01-21T18:00:00) (CY46R1)
 # - hd7v : (2019-12-31T18:00:00) 2020-11-01T00:00:00 - 2021-10-31T18:00:00 (2021-11-28T18:00:00) (CY47R1)
-# - hlkx : (2021-03-31T18:00:00) 2021-11-01T00:00:00 - 2022-10-23T18:00:00                       (CY47R3)
+# - hlkx : (2021-03-31T18:00:00) 2021-11-01T00:00:00 - 2022-10-23T18:00:00 (2022-10-27T06:00:00) (CY47R3)
 # - hues : (2022-09-14T00:00:00) 2022-10-24T00:00:00 - present                                   (CY47R3)
 # GHG forecast-only experiments :
 # - he9e : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - 2021-10-31T00:00:00 (2021-11-28T00:00:00) (CY47R1)
-# - hllc : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - 2022-10-23T00:00:00                       (CY47R3)
+# - hllc : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - 2022-10-23T00:00:00 (2022-10-27T00:00:00) (CY47R3)
 # - huet : (2022-09-15T00:00:00) 2022-10-24T00:00:00 - present                                   (CY47R3)
 def exp_available(exp, model_datetime, strict=False):
     if exp == '0001':
@@ -281,7 +281,7 @@ def exp_available(exp, model_datetime, strict=False):
             return False
         if strict and model_datetime > datetime.datetime(2022, 10, 23):
             return False
-        if model_datetime > datetime.datetime(2022, 10, 25):
+        if model_datetime > datetime.datetime(2022, 10, 30):
             return False
         return True
     if exp == 'hueu':
@@ -335,7 +335,9 @@ def exp_available(exp, model_datetime, strict=False):
             return False
         if model_datetime < datetime.datetime(2021, 3, 31, 18):
             return False
-        if model_datetime > datetime.datetime(2022, 10, 23, 18):
+        if strict and model_datetime > datetime.datetime(2022, 10, 23, 18):
+            return False
+        if model_datetime > datetime.datetime(2022, 10, 27, 6):
             return False
         return True
     if exp == 'hues':
@@ -359,7 +361,9 @@ def exp_available(exp, model_datetime, strict=False):
             return False
         if model_datetime < datetime.datetime(2021, 4, 1):
             return False
-        if model_datetime > datetime.datetime(2022, 10, 23):
+        if strict model_datetime > datetime.datetime(2022, 10, 23):
+            return False
+        if model_datetime > datetime.datetime(2022, 10, 27):
             return False
         return True
     if exp == 'huet':
