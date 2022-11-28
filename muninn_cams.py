@@ -361,7 +361,7 @@ def exp_available(exp, model_datetime, strict=False):
             return False
         if model_datetime < datetime.datetime(2021, 4, 1):
             return False
-        if strict model_datetime > datetime.datetime(2022, 10, 23):
+        if strict and model_datetime > datetime.datetime(2022, 10, 23):
             return False
         if model_datetime > datetime.datetime(2022, 10, 27):
             return False
