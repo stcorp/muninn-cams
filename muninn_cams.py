@@ -421,7 +421,7 @@ def default_param_for_exp(exp, type):
 
 
 def get_core_properties(product_type, ecmwfmars, levtype_options):
-    core = get_ecmwfmars_core_properties(product_type, ecmwfmars, levtype_options)
+    core = get_ecmwfmars_core_properties(product_type, ecmwfmars, levtype_options, packing='simple')
     if 'step' in ecmwfmars:
         step = ecmwfmars.step
     else:
