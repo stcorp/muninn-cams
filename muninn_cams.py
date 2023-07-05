@@ -1,6 +1,6 @@
 import os
 import re
-import datetime
+from datetime import datetime
 
 from muninn.struct import Struct
 from muninn_ecmwfmars import get_core_properties as get_ecmwfmars_core_properties, extract_grib_metadata
@@ -114,275 +114,70 @@ GHG_FC_PARAM = [
     '62.210',   # Methane
 ]
 
+EXP_AVAILABILITY = {
+    # see https://confluence.ecmwf.int/display/COPSRV/Global+production+log+files
+    # Each row has the following format:
+    #   'exp ': [model start time     , strict start time    , strict end time      , model end time       ],
+    # A strict time range is the time range of an expirement where that experiment is the primary experiment
+    # (and therefore resulting in overlap-free time ranges for a specific set of experiments).
+    # NRT production stream :
+    '0001': ["2016-06-21T12:00:00", "                   ", "                   ", "                   "],
+    #          started with CY41R1
+    #          switch to CY43R1 on 2017-01-24
+    #          switch to CY43R3 on 2017-09-26
+    #          switch to CY45R1 on 2018-06-26
+    #          switch to CY46R1 on 2019-07-09 (L137)
+    #          switch to CY47R1 on 2020-10-06
+    #          switch to CY47R2 on 2021-05-18
+    #          switch to CY47R3 on 2021-10-12T12:00:00
+    #          switch from Cray HPC to Atos HPC on 2022-10-18T12:00:00
+    #          switch to CY48R1 on 2023-06-27T12:00:00
+    # Forecast-only experiments :
+    'gjjh': ["2016-06-01T00:00:00", "                   ", "2017-01-23T00:00:00", "2017-03-26T00:00:00"],  # (CY41R1)
+    'gnhb': ["2017-01-10T00:00:00", "2017-01-24T00:00:00", "2017-09-25T00:00:00", "2017-11-30T00:00:00"],  # (CY43R1)
+    'gsyg': ["2017-09-01T00:00:00", "2017-09-26T00:00:00", "2018-06-25T00:00:00", "2018-08-02T00:00:00"],  # (CY43R3)
+    'gzhy': ["2018-06-01T00:00:00", "2018-06-26T00:00:00", "                   ", "2019-07-09T00:00:00"],  # (CY45R1)
+    'h7c4': ["2018-12-01T00:00:00", "2019-07-10T00:00:00", "                   ", "2020-10-06T00:00:00"],  # (CY46R1)
+    'hdir': ["2019-10-01T00:00:00", "2020-10-07T00:00:00", "                   ", "2021-05-18T00:00:00"],  # (CY47R1)
+    'hj7b': ["2020-11-01T00:00:00", "2021-05-19T00:00:00", "                   ", "2021-10-12T00:00:00"],  # (CY47R2)
+    'hlqd': ["2021-03-02T00:00:00", "2021-10-13T00:00:00", "                   ", "2022-10-18T00:00:00"],  # (CY47R3)
+    'ht3q': ["2022-04-30T00:00:00", "2022-10-19T00:00:00", "                   ", "2023-06-27T00:00:00"],  # (CY47R3)
+    'hylz': ["2022-09-01T00:00:00", "2023-06-28T00:00:00", "                   ", "                   "],  # (CY48R1)
+    # GHG forecast experiments :
+    'gqpe': ["2017-01-01T00:00:00", "2017-11-01T00:00:00", "2018-11-30T00:00:00", "2018-12-31T00:00:00"],  # (CY43R1)
+    'gznv': ["2018-06-01T00:00:00", "2018-12-01T00:00:00", "2019-08-31T00:00:00", "2019-12-31T00:00:00"],  # (CY45R1)
+    'h9sp': ["2019-09-01T00:00:00", "                   ", "2020-10-31T00:00:00", "2021-01-26T00:00:00"],  # (CY46R1)
+    'he9h': ["2020-01-01T00:00:00", "2020-11-01T00:00:00", "2021-10-31T00:00:00", "2021-12-01T00:00:00"],  # (CY47R1)
+    'hlld': ["2021-04-01T00:00:00", "2021-11-01T00:00:00", "2022-10-23T00:00:00", "2022-10-30T00:00:00"],  # (CY47R3)
+    'hueu': ["2022-09-19T00:00:00", "2022-10-24T00:00:00", "                   ", "                   "],  # (CY47R3)
+    # GHG analysis experiments :
+    'gqiq': ["2016-12-31T18:00:00", "2017-11-01T00:00:00", "2018-11-30T18:00:00", "2018-12-28T06:00:00"],  # (CY43R1)
+    'gwx3': ["2017-11-30T18:00:00", "2018-12-01T00:00:00", "2019-08-31T18:00:00", "2020-01-22T18:00:00"],  # (CY45R1)
+    'h72g': ["2018-11-27T18:00:00", "2019-09-01T00:00:00", "2020-10-31T18:00:00", "2021-01-21T18:00:00"],  # (CY46R1)
+    'hd7v': ["2019-12-31T18:00:00", "2020-11-01T00:00:00", "2021-10-31T18:00:00", "2021-11-28T18:00:00"],  # (CY47R1)
+    'hlkx': ["2021-03-31T18:00:00", "2021-11-01T00:00:00", "2022-10-23T18:00:00", "2022-10-27T06:00:00"],  # (CY47R3)
+    'hues': ["2022-09-14T00:00:00", "2022-10-24T00:00:00", "                   ", "                   "],  # (CY47R3)
+    # GHG forecast-only experiments :
+    'he9e': ["2020-01-01T00:00:00", "2020-11-01T00:00:00", "2021-10-31T00:00:00", "2021-11-28T00:00:00"],  # (CY47R1)
+    'hllc': ["2021-04-01T00:00:00", "2021-11-01T00:00:00", "2022-10-23T00:00:00", "2022-10-27T00:00:00"],  # (CY47R3)
+    'huet': ["2022-09-15T00:00:00", "2022-10-24T00:00:00", "                   ", "                   "],  # (CY47R3)
+}
 
-# see https://confluence.ecmwf.int/display/COPSRV/Global+production+log+files
-# A strict time range is the time range of an expirement where that experiment is the primary experiment
-# (and therefore resulting in overlap-free time ranges for a specific set of experiments).
-# NRT production stream :
-# - 0001 : 2016-06-21T12:00:00 - present
-#          started with CY41R1
-#          switch to CY43R1 on 2017-01-24
-#          switch to CY43R3 on 2017-09-26
-#          switch to CY45R1 on 2018-06-26
-#          switch to CY46R1 on 2019-07-09 (L137)
-#          switch to CY47R1 on 2020-10-06
-#          switch to CY47R2 on 2021-05-18
-#          switch to CY47R3 on 2021-10-12T12:00:00
-#          switch from Cray HPC to Atos HPC on 2022-10-18T12:00:00
-#          switch to CY48R1 on 2023-06-27T12:00:00
-# Forecast-only experiments :
-# - gjjh :                       2016-06-01T00:00:00 - 2017-01-23T00:00:00 (2017-03-26T00:00:00) (CY41R1)
-# - gnhb : (2017-01-10T00:00:00) 2017-01-24T00:00:00 - 2017-09-25T00:00:00 (2017-11-30T00:00:00) (CY43R1)
-# - gsyg : (2017-09-01T00:00:00) 2017-09-26T00:00:00 - 2018-06-25T00:00:00 (2018-08-02T00:00:00) (CY43R3)
-# - gzhy : (2018-06-01T00:00:00) 2018-06-26T00:00:00 - 2019-07-09T00:00:00                       (CY45R1)
-# - h7c4 : (2018-12-01T00:00:00) 2019-07-10T00:00:00 - 2020-10-06T00:00:00                       (CY46R1)
-# - hdir : (2019-10-01T00:00:00) 2020-10-07T00:00:00 - 2021-05-18T00:00:00                       (CY47R1)
-# - hj7b : (2020-11-01T00:00:00) 2021-05-19T00:00:00 - 2021-10-12T00:00:00                       (CY47R2)
-# - hlqd : (2021-03-02T00:00:00) 2021-10-13T00:00:00 - 2022-10-18T00:00:00                       (CY47R3)
-# - ht3q : (2022-04-30T00:00:00) 2022-10-19T00:00:00 - 2023-06-27T00:00:00                       (CY47R3)
-# - hylz : (2022-09-01T00:00:00) 2023-06-28T00:00:00 - present                                   (CY48R1)
-# GHG forecast experiments :
-# - gqpe : (2017-01-01T00:00:00) 2017-11-01T00:00:00 - 2018-11-30T00:00:00 (2018-12-31T00:00:00) (CY43R1)
-# - gznv : (2018-06-01T00:00:00) 2018-12-01T00:00:00 - 2019-08-31T00:00:00 (2019-21-31T00:00:00) (CY45R1)
-# - h9sp :                       2019-09-01T00:00:00 - 2020-10-31T00:00:00 (2021-01-26T00:00:00) (CY46R1)
-# - he9h : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - 2021-10-31T00:00:00 (2021-12-01T00:00:00) (CY47R1)
-# - hlld : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - 2022-10-23T00:00:00 (2022-10-30T00:00:00) (CY47R3)
-# - hueu : (2022-09-19T00:00:00) 2022-10-24T00:00:00 - present                                   (CY47R3)
-# GHG analysis experiments :
-# - gqiq : (2016-12-31T18:00:00) 2017-11-01T00:00:00 - 2018-11-30T18:00:00 (2018-12-28T06:00:00) (CY43R1)
-# - gwx3 : (2017-11-30T18:00:00) 2018-12-01T00:00:00 - 2019-08-31T18:00:00 (2020-01-22T18:00:00) (CY45R1)
-# - h72g : (2018-11-27T18:00:00) 2019-09-01T00:00:00 - 2020-10-31T18:00:00 (2021-01-21T18:00:00) (CY46R1)
-# - hd7v : (2019-12-31T18:00:00) 2020-11-01T00:00:00 - 2021-10-31T18:00:00 (2021-11-28T18:00:00) (CY47R1)
-# - hlkx : (2021-03-31T18:00:00) 2021-11-01T00:00:00 - 2022-10-23T18:00:00 (2022-10-27T06:00:00) (CY47R3)
-# - hues : (2022-09-14T00:00:00) 2022-10-24T00:00:00 - present                                   (CY47R3)
-# GHG forecast-only experiments :
-# - he9e : (2020-01-01T00:00:00) 2020-11-01T00:00:00 - 2021-10-31T00:00:00 (2021-11-28T00:00:00) (CY47R1)
-# - hllc : (2021-04-01T00:00:00) 2021-11-01T00:00:00 - 2022-10-23T00:00:00 (2022-10-27T00:00:00) (CY47R3)
-# - huet : (2022-09-15T00:00:00) 2022-10-24T00:00:00 - present                                   (CY47R3)
+
 def exp_available(exp, model_datetime, strict=False):
-    if exp == '0001':
-        if model_datetime < datetime.datetime(2016, 6, 21, 12):
-            return False
-        return True
-    if exp == 'gjjh':
-        if model_datetime < datetime.datetime(2016, 6, 1):
-            return False
-        if strict and model_datetime > datetime.datetime(2017, 1, 23):
-            return False
-        if model_datetime > datetime.datetime(2017, 3, 26):
-            return False
-        return True
-    if exp == 'gnhb':
-        if strict and model_datetime < datetime.datetime(2017, 1, 24):
-            return False
-        if model_datetime < datetime.datetime(2017, 1, 10):
-            return False
-        if strict and model_datetime > datetime.datetime(2017, 9, 25):
-            return False
-        if model_datetime > datetime.datetime(2017, 11, 30):
-            return False
-        return True
-    if exp == 'gsyg':
-        if strict and model_datetime < datetime.datetime(2017, 9, 26):
-            return False
-        if model_datetime < datetime.datetime(2017, 9, 1):
-            return False
-        if strict and model_datetime > datetime.datetime(2018, 6, 25):
-            return False
-        if model_datetime > datetime.datetime(2018, 8, 2):
-            return False
-        return True
-    if exp == 'gzhy':
-        if strict and model_datetime < datetime.datetime(2018, 6, 26):
-            return False
-        if model_datetime < datetime.datetime(2018, 6, 1):
-            return False
-        if model_datetime > datetime.datetime(2019, 7, 9):
-            return False
-        return True
-    if exp == 'h7c4':
-        if strict and model_datetime < datetime.datetime(2019, 7, 10):
-            return False
-        if model_datetime < datetime.datetime(2018, 12, 1):
-            return False
-        if model_datetime > datetime.datetime(2020, 10, 6):
-            return False
-        return True
-    if exp == 'hdir':
-        if strict and model_datetime < datetime.datetime(2020, 10, 7):
-            return False
-        if model_datetime < datetime.datetime(2019, 10, 1):
-            return False
-        if model_datetime > datetime.datetime(2021, 5, 18):
-            return False
-        return True
-    if exp == 'hj7b':
-        if strict and model_datetime < datetime.datetime(2021, 5, 19):
-            return False
-        if model_datetime < datetime.datetime(2020, 11, 1):
-            return False
-        if model_datetime > datetime.datetime(2021, 10, 12):
-            return False
-        return True
-    if exp == 'hlqd':
-        if strict and model_datetime < datetime.datetime(2021, 10, 13):
-            return False
-        if model_datetime < datetime.datetime(2021, 3, 2):
-            return False
-        if model_datetime > datetime.datetime(2022, 10, 18):
-            return False
-        return True
-    if exp == 'ht3q':
-        if strict and model_datetime < datetime.datetime(2022, 10, 19):
-            return False
-        if model_datetime < datetime.datetime(2022, 4, 30):
-            return False
-        if model_datetime > datetime.datetime(2023, 6, 27):
-            return False
-        return True
-    if exp == 'hylz':
-        if strict and model_datetime < datetime.datetime(2022, 9, 1):
-            return False
-        if model_datetime < datetime.datetime(2023, 6, 28):
-            return False
-        return True
-    if exp == 'gqpe':
-        if strict and model_datetime < datetime.datetime(2017, 11, 1):
-            return False
-        if model_datetime < datetime.datetime(2017, 1, 1):
-            return False
-        if strict and model_datetime > datetime.datetime(2018, 11, 30):
-            return False
-        if model_datetime > datetime.datetime(2018, 12, 31):
-            return False
-        return True
-    if exp == 'gznv':
-        if strict and model_datetime < datetime.datetime(2018, 12, 1):
-            return False
-        if model_datetime < datetime.datetime(2018, 6, 1):
-            return False
-        if strict and model_datetime > datetime.datetime(2019, 8, 31):
-            return False
-        if model_datetime > datetime.datetime(2019, 12, 31):
-            return False
-        return True
-    if exp == 'h9sp':
-        if model_datetime < datetime.datetime(2019, 9, 1):
-            return False
-        if strict and model_datetime > datetime.datetime(2020, 10, 31):
-            return False
-        if model_datetime > datetime.datetime(2021, 1, 26):
-            return False
-        return True
-    if exp == 'he9h':
-        if strict and model_datetime < datetime.datetime(2020, 11, 1):
-            return False
-        if model_datetime < datetime.datetime(2020, 1, 1):
-            return False
-        if strict and model_datetime > datetime.datetime(2021, 10, 31):
-            return False
-        if model_datetime > datetime.datetime(2021, 12, 1):
-            return False
-        return True
-    if exp == 'hlld':
-        if strict and model_datetime < datetime.datetime(2021, 11, 1):
-            return False
-        if model_datetime < datetime.datetime(2021, 4, 1):
-            return False
-        if strict and model_datetime > datetime.datetime(2022, 10, 23):
-            return False
-        if model_datetime > datetime.datetime(2022, 10, 30):
-            return False
-        return True
-    if exp == 'hueu':
-        if strict and model_datetime < datetime.datetime(2022, 10, 24):
-            return False
-        if model_datetime < datetime.datetime(2022, 9, 19):
-            return False
-        return True
-    if exp == 'gqiq':
-        if strict and model_datetime < datetime.datetime(2017, 11, 1):
-            return False
-        if model_datetime < datetime.datetime(2016, 12, 31, 18):
-            return False
-        if strict and model_datetime > datetime.datetime(2018, 11, 30, 18):
-            return False
-        if model_datetime > datetime.datetime(2018, 12, 28, 6):
-            return False
-        return True
-    if exp == 'gwx3':
-        if strict and model_datetime < datetime.datetime(2018, 12, 1):
-            return False
-        if model_datetime < datetime.datetime(2017, 11, 30, 18):
-            return False
-        if strict and model_datetime > datetime.datetime(2019, 8, 31, 18):
-            return False
-        if model_datetime > datetime.datetime(2020, 1, 22, 18):
-            return False
-        return True
-    if exp == 'h72g':
-        if strict and model_datetime < datetime.datetime(2019, 9, 1):
-            return False
-        if model_datetime < datetime.datetime(2018, 11, 27, 18):
-            return False
-        if strict and model_datetime > datetime.datetime(2020, 10, 31, 18):
-            return False
-        if model_datetime > datetime.datetime(2021, 1, 21, 18):
-            return False
-        return True
-    if exp == 'hd7v':
-        if strict and model_datetime < datetime.datetime(2020, 11, 1):
-            return False
-        if model_datetime < datetime.datetime(2019, 12, 31, 18):
-            return False
-        if strict and model_datetime > datetime.datetime(2021, 10, 31, 18):
-            return False
-        if model_datetime > datetime.datetime(2021, 11, 28, 18):
-            return False
-        return True
-    if exp == 'hlkx':
-        if strict and model_datetime < datetime.datetime(2021, 11, 1):
-            return False
-        if model_datetime < datetime.datetime(2021, 3, 31, 18):
-            return False
-        if strict and model_datetime > datetime.datetime(2022, 10, 23, 18):
-            return False
-        if model_datetime > datetime.datetime(2022, 10, 27, 6):
-            return False
-        return True
-    if exp == 'hues':
-        if strict and model_datetime < datetime.datetime(2022, 10, 24):
-            return False
-        if model_datetime < datetime.datetime(2022, 9, 14, 18):
-            return False
-        return True
-    if exp == 'he9e':
-        if strict and model_datetime < datetime.datetime(2020, 11, 1):
-            return False
-        if model_datetime < datetime.datetime(2020, 1, 1):
-            return False
-        if strict and model_datetime > datetime.datetime(2021, 10, 31):
-            return False
-        if model_datetime > datetime.datetime(2021, 11, 28):
-            return False
-        return True
-    if exp == 'hllc':
-        if strict and model_datetime < datetime.datetime(2021, 11, 1):
-            return False
-        if model_datetime < datetime.datetime(2021, 4, 1):
-            return False
-        if strict and model_datetime > datetime.datetime(2022, 10, 23):
-            return False
-        if model_datetime > datetime.datetime(2022, 10, 27):
-            return False
-        return True
-    if exp == 'huet':
-        if strict and model_datetime < datetime.datetime(2022, 10, 24):
-            return False
-        if model_datetime < datetime.datetime(2022, 9, 15):
-            return False
-        return True
-    return False
+    if strict:
+        if EXP_AVAILABILITY[exp][1].strip():
+            if model_datetime < datetime.strptime(EXP_AVAILABILITY[exp][1], '%Y-%m-%dT%H:%M:%S'):
+                return False
+        if EXP_AVAILABILITY[exp][2].strip():
+            if model_datetime > datetime.strptime(EXP_AVAILABILITY[exp][2], '%Y-%m-%dT%H:%M:%S'):
+                return False
+    if model_datetime < datetime.strptime(EXP_AVAILABILITY[exp][0], '%Y-%m-%dT%H:%M:%S'):
+        return False
+    if EXP_AVAILABILITY[exp][3].strip():
+        if model_datetime > datetime.strptime(EXP_AVAILABILITY[exp][3], '%Y-%m-%dT%H:%M:%S'):
+            return False
+    return True
 
 
 def marsclass_for_exp(exp):
@@ -413,7 +208,7 @@ def default_grid_for_exp(exp):
 def default_levelist_for_exp(exp, model_datetime):
     if exp in GHG_EXP_NAMES:
         return range(137)
-    if model_datetime > datetime.datetime(2019, 7, 9) or exp == 'h2xm':
+    if model_datetime > datetime(2019, 7, 9) or exp == 'h2xm':
         return range(137)
     return range(60)
 
@@ -454,8 +249,8 @@ def create_properties(date, expver="0001", type="fc", step=0, grid=None, sfc_par
     stream = stream_for_exp(expver)
     if grid is None:
         grid = default_grid_for_exp(expver)
-    if isinstance(date, datetime.date) and not isinstance(date, datetime.datetime):
-        date = datetime.datetime(date.year, date.month, date.day)
+    if isinstance(date, datetime.date) and not isinstance(date, datetime):
+        date = datetime(date.year, date.month, date.day)
     if levelist is None:
         levelist = default_levelist_for_exp(expver, date)
     if sfc_param is None and ml_param is None:
