@@ -116,8 +116,8 @@ GHG_FC_PARAM = [
 
 EXP_AVAILABILITY = {
     # see https://confluence.ecmwf.int/display/COPSRV/Global+production+log+files
-    # Each row has the following format:
-    #   'exp ': [model start time     , strict start time    , strict end time      , model end time       ],
+    # Each row has the following format :
+    #   'exp': [model start time, strict start time, strict end time, model end time],
     # A strict time range is the time range of an expirement where that experiment is the primary experiment
     # (and therefore resulting in overlap-free time ranges for a specific set of experiments).
     # NRT production stream :
