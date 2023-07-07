@@ -1,6 +1,6 @@
 import os
 import re
-from datetime import datetime
+from datetime import datetime, date
 
 from muninn.struct import Struct
 from muninn_ecmwfmars import get_core_properties as get_ecmwfmars_core_properties, extract_grib_metadata
@@ -242,17 +242,18 @@ def get_core_properties(product_type, ecmwfmars, levtype_options):
     return core
 
 
-def create_properties(date, expver="0001", type="fc", step=0, grid=None, sfc_param=None, ml_param=None, levelist=None):
+def create_properties(model_date, expver="0001", type="fc", step=0, grid=None, sfc_param=None, ml_param=None,
+                      levelist=None):
     product_type = '%s_%s_%s' % (PRODUCT_TYPE_BASE, expver, type)
 
     marsclass = marsclass_for_exp(expver)
     stream = stream_for_exp(expver)
     if grid is None:
         grid = default_grid_for_exp(expver)
-    if isinstance(date, datetime.date) and not isinstance(date, datetime):
-        date = datetime(date.year, date.month, date.day)
+    if isinstance(model_date, date) and not isinstance(model_date, datetime):
+        model_date = datetime(model_date.year, model_date.month, model_date.day)
     if levelist is None:
-        levelist = default_levelist_for_exp(expver, date)
+        levelist = default_levelist_for_exp(expver, model_date)
     if sfc_param is None and ml_param is None:
         sfc_param, ml_param = default_param_for_exp(expver, type)
 
@@ -261,8 +262,8 @@ def create_properties(date, expver="0001", type="fc", step=0, grid=None, sfc_par
     ecmwfmars.stream = stream
     ecmwfmars.expver = expver
     ecmwfmars.type = type
-    ecmwfmars.date = date.strftime("%Y-%m-%d")
-    ecmwfmars.time = date.strftime("%H:%M:%S")
+    ecmwfmars.date = model_date.strftime("%Y-%m-%d")
+    ecmwfmars.time = model_date.strftime("%H:%M:%S")
     if step != 0:
         ecmwfmars.step = step
     ecmwfmars.grid = grid
@@ -312,15 +313,15 @@ class CAMSProduct(object):
         return re.match(self.filename_pattern, os.path.basename(paths[0])) is not None
 
     def archive_path(self, properties):
-        date = properties.core.creation_date
+        model_date = properties.core.creation_date
         prefix, exp_name, exp_type = properties.core.product_type.split('_')
         return os.path.join(
             prefix,
             exp_name,
             exp_type,
-            "%04d" % date.year,
-            "%02d" % date.month,
-            "%02d" % date.day,
+            "%04d" % model_date.year,
+            "%02d" % model_date.month,
+            "%02d" % model_date.day,
         )
 
     def analyze(self, paths):
