@@ -6,34 +6,20 @@ from muninn.struct import Struct
 from muninn_ecmwfmars import get_core_properties as get_ecmwfmars_core_properties, extract_grib_metadata
 
 
-PRODUCT_TYPE_BASE = 'cams'
-
-CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b', 'hlqd', 'ht3q', 'hylz']
-EXP_NAMES = ['0001'] + CONTROL_EXP_NAMES
-
-GHG_CONTROL_EXP_NAMES = ['he9e', 'hllc', 'huet']
-GHG_AN_EXP_NAMES = ['gqiq', 'gwx3', 'h72g', 'hd7v', 'hlkx', 'hues']
-GHG_FC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp', 'he9h', 'hlld', 'hueu']
-GHG_EXP_NAMES = GHG_AN_EXP_NAMES + GHG_FC_EXP_NAMES + GHG_CONTROL_EXP_NAMES
-
-MC_EXP_NAMES = ['0001']  # marsclass="mc"
-RD_EXP_NAMES = CONTROL_EXP_NAMES + GHG_EXP_NAMES  # marsclass="rd"
 EXP_TYPES = ['fc', 'an']
 
-PRODUCT_TYPES = []
-for _exp_name in EXP_NAMES:
-    for _exp_type in EXP_TYPES:
-        if _exp_name in CONTROL_EXP_NAMES and _exp_type == 'an':
-            continue
-        PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, _exp_type))
-for _exp_name in GHG_FC_EXP_NAMES:
-    PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, 'fc'))
-for _exp_name in GHG_CONTROL_EXP_NAMES:
-    PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, 'fc'))
-for _exp_name in GHG_AN_EXP_NAMES:
-    PRODUCT_TYPES.append('%s_%s_%s' % (PRODUCT_TYPE_BASE, _exp_name, 'an'))
+CAMS_EXP_NAME = '0001'
+CAMS_CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b', 'hlqd', 'ht3q', 'hylz']
+CAMS_EXP_NAMES = [CAMS_EXP_NAME] + CAMS_CONTROL_EXP_NAMES
 
-AN_SFC_PARAM = [
+CAMS_PRODUCT_TYPE_BASE = 'cams'
+CAMS_PRODUCT_TYPES = []
+CAMS_PRODUCT_TYPES.append("%s_%s_%s" % (CAMS_PRODUCT_TYPE_BASE, CAMS_EXP_NAME, 'fc'))
+CAMS_PRODUCT_TYPES.append("%s_%s_%s" % (CAMS_PRODUCT_TYPE_BASE, CAMS_EXP_NAME, 'an'))
+for _exp_name in CAMS_CONTROL_EXP_NAMES:
+    CAMS_PRODUCT_TYPES.append("%s_%s_%s" % (CAMS_PRODUCT_TYPE_BASE, _exp_name, 'fc'))
+
+CAMS_AN_SFC_PARAM = [
     '129.128',  # Geopotential
     '73.210',   # PM2.5
     '74.210',   # PM10
@@ -52,7 +38,7 @@ AN_SFC_PARAM = [
     '122.215',  # Total fine mode (r < 0.5 um) Aerosol Optical Depth at 550 nm
 ]
 
-FC_SFC_PARAM = [
+CAMS_FC_SFC_PARAM = [
     '129.128',  # Geopotential
     '73.210',   # PM2.5
     '74.210',   # PM10
@@ -71,7 +57,7 @@ FC_SFC_PARAM = [
     '122.215',  # Total fine mode (r < 0.5 um) Aerosol Optical Depth at 550 nm
 ]
 
-AN_ML_PARAM = [
+CAMS_AN_ML_PARAM = [
     '4.217',    # Methane
     '27.217',   # Nitrogen monoxide
     '130.128',  # Temperature
@@ -83,7 +69,7 @@ AN_ML_PARAM = [
     '203.210',  # GEMS Ozone
 ]
 
-FC_ML_PARAM = [
+CAMS_FC_ML_PARAM = [
     '4.217',    # Methane
     '27.217',   # Nitrogen monoxide
     '130.128',  # Temperature
@@ -97,24 +83,7 @@ FC_ML_PARAM = [
     '188.215',  # Aerosol backscatter coefficient at 1064 nm (from ground)
 ]
 
-GHG_AN_PARAM = [
-    '129.128',  # Geopotential
-    '130.128',  # Temperature
-    '133.128',  # Specific humidity
-    '61.210',   # Carbon dioxide
-    '62.210',   # Methane
-]
-
-GHG_FC_PARAM = [
-    '129.128',  # Geopotential
-    '130.128',  # Temperature
-    '133.128',  # Specific humidity
-    '123.210',  # Carbon monoxide
-    '61.210',   # Carbon dioxide
-    '62.210',   # Methane
-]
-
-EXP_AVAILABILITY = {
+CAMS_EXP_AVAILABILITY = {
     # see https://confluence.ecmwf.int/display/COPSRV/Global+production+log+files
     # Each row has the following format :
     #   'exp': [model start time, strict start time, strict end time, model end time],
@@ -143,86 +112,69 @@ EXP_AVAILABILITY = {
     'hlqd': ["2021-03-02T00:00:00", "2021-10-13T00:00:00", "                   ", "2022-10-18T00:00:00"],  # (CY47R3)
     'ht3q': ["2022-04-30T00:00:00", "2022-10-19T00:00:00", "                   ", "2023-06-27T00:00:00"],  # (CY47R3)
     'hylz': ["2022-09-01T00:00:00", "2023-06-28T00:00:00", "                   ", "                   "],  # (CY48R1)
-    # GHG forecast experiments :
+}
+
+CAMSGHG_FC_EXP_NAME = '0001'
+CAMSGHG_AN_EXP_NAME = '0011'
+CAMSGHG_CONTROL_EXP_NAMES = ['he9e', 'hllc', 'huet', 'iaiw']
+CAMSGHG_AN_MC_EXP_NAMES = ['gqiq', 'gwx3', 'h72g', 'hd7v', 'hlkx', 'hues']  # old GHG models
+CAMSGHG_FC_MC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp', 'he9h', 'hlld', 'hueu']  # old GHG models
+CAMSGHG_EXP_NAMES = [CAMSGHG_FC_EXP_NAME, CAMSGHG_AN_EXP_NAME] + CAMSGHG_CONTROL_EXP_NAMES + \
+    CAMSGHG_AN_MC_EXP_NAMES + CAMSGHG_FC_MC_EXP_NAMES
+
+CAMSGHG_PRODUCT_TYPE_BASE = 'camsghg'  # CAMS Greenhous Gases service
+CAMSGHG_PRODUCT_TYPES = []
+CAMSGHG_PRODUCT_TYPES.append("%s_%s_%s" % (CAMSGHG_PRODUCT_TYPE_BASE, CAMSGHG_FC_EXP_NAME, 'fc'))
+CAMSGHG_PRODUCT_TYPES.append("%s_%s_%s" % (CAMSGHG_PRODUCT_TYPE_BASE, CAMSGHG_AN_EXP_NAME, 'an'))
+for _exp_name in CAMSGHG_CONTROL_EXP_NAMES:
+    CAMSGHG_PRODUCT_TYPES.append("%s_%s_%s" % (CAMSGHG_PRODUCT_TYPE_BASE, _exp_name, 'fc'))
+for _exp_name in CAMSGHG_FC_MC_EXP_NAMES:
+    CAMSGHG_PRODUCT_TYPES.append("%s_%s_%s" % (CAMSGHG_PRODUCT_TYPE_BASE, _exp_name, 'fc'))
+for _exp_name in CAMSGHG_AN_MC_EXP_NAMES:
+    CAMSGHG_PRODUCT_TYPES.append("%s_%s_%s" % (CAMSGHG_PRODUCT_TYPE_BASE, _exp_name, 'an'))
+
+CAMSGHG_AN_ML_PARAM = [
+    '129.128',  # Geopotential
+    '130.128',  # Temperature
+    '133.128',  # Specific humidity
+    '61.210',   # Carbon dioxide
+    '62.210',   # Methane
+]
+
+CAMSGHG_FC_ML_PARAM = [
+    '129.128',  # Geopotential
+    '130.128',  # Temperature
+    '133.128',  # Specific humidity
+    '123.210',  # Carbon monoxide
+    '61.210',   # Carbon dioxide
+    '62.210',   # Methane
+]
+
+CAMSGHG_EXP_AVAILABILITY = {
+    # forecast experiment :
+    '0001': ["2024-02-26T00:00:00", "2024-03-01T00:00:00", "                   ", "                   "],
+    # analysis experiment :
+    '0011': ["2024-02-18T00:00:00", "2024-03-01T00:00:00", "                   ", "                   "],
+    # old forecast experiments :
     'gqpe': ["2017-01-01T00:00:00", "2017-11-01T00:00:00", "2018-11-30T00:00:00", "2018-12-31T00:00:00"],  # (CY43R1)
     'gznv': ["2018-06-01T00:00:00", "2018-12-01T00:00:00", "2019-08-31T00:00:00", "2019-12-31T00:00:00"],  # (CY45R1)
     'h9sp': ["2019-09-01T00:00:00", "                   ", "2020-10-31T00:00:00", "2021-01-26T00:00:00"],  # (CY46R1)
     'he9h': ["2020-01-01T00:00:00", "2020-11-01T00:00:00", "2021-10-31T00:00:00", "2021-12-01T00:00:00"],  # (CY47R1)
     'hlld': ["2021-04-01T00:00:00", "2021-11-01T00:00:00", "2022-10-23T00:00:00", "2022-10-30T00:00:00"],  # (CY47R3)
-    'hueu': ["2022-09-19T00:00:00", "2022-10-24T00:00:00", "                   ", "                   "],  # (CY47R3)
-    # GHG analysis experiments :
+    'hueu': ["2022-09-19T00:00:00", "2022-10-24T00:00:00", "                   ", "2024-02-29T00:00:00"],  # (CY47R3)
+    # old analysis experiments :
     'gqiq': ["2016-12-31T18:00:00", "2017-11-01T00:00:00", "2018-11-30T18:00:00", "2018-12-28T06:00:00"],  # (CY43R1)
     'gwx3': ["2017-11-30T18:00:00", "2018-12-01T00:00:00", "2019-08-31T18:00:00", "2020-01-22T18:00:00"],  # (CY45R1)
     'h72g': ["2018-11-27T18:00:00", "2019-09-01T00:00:00", "2020-10-31T18:00:00", "2021-01-21T18:00:00"],  # (CY46R1)
     'hd7v': ["2019-12-31T18:00:00", "2020-11-01T00:00:00", "2021-10-31T18:00:00", "2021-11-28T18:00:00"],  # (CY47R1)
     'hlkx': ["2021-03-31T18:00:00", "2021-11-01T00:00:00", "2022-10-23T18:00:00", "2022-10-27T06:00:00"],  # (CY47R3)
-    'hues': ["2022-09-14T00:00:00", "2022-10-24T00:00:00", "                   ", "                   "],  # (CY47R3)
-    # GHG forecast-only experiments :
+    'hues': ["2022-09-14T00:00:00", "2022-10-24T00:00:00", "                   ", "2024-02-29T18:00:00"],  # (CY47R3)
+    # forecast-only experiments :
     'he9e': ["2020-01-01T00:00:00", "2020-11-01T00:00:00", "2021-10-31T00:00:00", "2021-11-28T00:00:00"],  # (CY47R1)
     'hllc': ["2021-04-01T00:00:00", "2021-11-01T00:00:00", "2022-10-23T00:00:00", "2022-10-27T00:00:00"],  # (CY47R3)
-    'huet': ["2022-09-15T00:00:00", "2022-10-24T00:00:00", "                   ", "                   "],  # (CY47R3)
+    'huet': ["2022-09-15T00:00:00", "2022-10-24T00:00:00", "                   ", "2024-02-29T00:00:00"],  # (CY47R3)
+    'iaiw': ["2024-02-18T00:00:00", "2024-03-01T00:00:00", "                   ", "                   "],
 }
-
-
-def exp_available(exp, model_datetime, strict=False):
-    if strict:
-        if EXP_AVAILABILITY[exp][1].strip():
-            if model_datetime < datetime.strptime(EXP_AVAILABILITY[exp][1], '%Y-%m-%dT%H:%M:%S'):
-                return False
-        if EXP_AVAILABILITY[exp][2].strip():
-            if model_datetime > datetime.strptime(EXP_AVAILABILITY[exp][2], '%Y-%m-%dT%H:%M:%S'):
-                return False
-    if model_datetime < datetime.strptime(EXP_AVAILABILITY[exp][0], '%Y-%m-%dT%H:%M:%S'):
-        return False
-    if EXP_AVAILABILITY[exp][3].strip():
-        if model_datetime > datetime.strptime(EXP_AVAILABILITY[exp][3], '%Y-%m-%dT%H:%M:%S'):
-            return False
-    return True
-
-
-def marsclass_for_exp(exp):
-    if exp in RD_EXP_NAMES:
-        return 'rd'
-    # the default mars class for CAMS is 'mc' (from 'MACC', which is the old name for 'CAMS')
-    return 'mc'
-
-
-def stream_for_exp(exp):
-    if exp in ['gznv', 'gqpe']:
-        # the first GHG forecast runs used 'lwda', all other GHG runs use 'oper'
-        return 'lwda'
-    if exp == 'gzhy':
-        # this control run was not using the default stream
-        return 'lwda'
-    return 'oper'
-
-
-def default_grid_for_exp(exp):
-    if exp in GHG_AN_EXP_NAMES or exp in GHG_CONTROL_EXP_NAMES:
-        return 'F200'
-    if exp in GHG_FC_EXP_NAMES:
-        return 'F640'
-    return 'F256'
-
-
-def default_levelist_for_exp(exp, model_datetime):
-    if exp in GHG_EXP_NAMES:
-        return range(137)
-    if model_datetime > datetime(2019, 7, 9) or exp == 'h2xm':
-        return range(137)
-    return range(60)
-
-
-def default_param_for_exp(exp, type):
-    if exp in GHG_AN_EXP_NAMES or exp in GHG_CONTROL_EXP_NAMES:  # control uses 'an' parameter list
-        return None, GHG_AN_PARAM
-    if exp in GHG_FC_EXP_NAMES:
-        return None, GHG_FC_PARAM
-    if type == 'an':
-        return AN_SFC_PARAM, AN_ML_PARAM
-    if type == 'fc':
-        return FC_SFC_PARAM, FC_ML_PARAM
-    return None, None
 
 
 def get_core_properties(product_type, ecmwfmars, levtype_options):
@@ -231,31 +183,31 @@ def get_core_properties(product_type, ecmwfmars, levtype_options):
         step = ecmwfmars.step
     else:
         step = 0
-    assert product_type == "%s_%s_%s" % (PRODUCT_TYPE_BASE, ecmwfmars.expver, ecmwfmars.type), \
-        "inconsistent product_type %s %s" % (core.product_type, "cams_%s_%s" % (ecmwfmars.expver, ecmwfmars.type))
+    product_type_base, model, exp_type = product_type.split('_')
+    assert model == ecmwfmars.expver and exp_type == ecmwfmars.type, "inconsistent product_type %s %s" % \
+        (core.product_type, "%s_%s_%s" % (product_type_base, ecmwfmars.expver, ecmwfmars.type))
     core.product_type = product_type
-    core.product_name = "%s_%s_%s_%s" % (PRODUCT_TYPE_BASE, ecmwfmars.expver,
+    core.product_name = "%s_%s_%s_%s" % (product_type_base, ecmwfmars.expver,
                                          core.creation_date.strftime("%Y%m%dT%H%M%S"), ecmwfmars.type)
-    if ecmwfmars.type == "fc":
+    if ecmwfmars.type == 'fc':
         core.product_name += "_%03d" % (step,)
     core.physical_name = "%s.grib" % (core.product_name,)
     return core
 
 
-def create_properties(model_date, expver="0001", type="fc", step=0, grid=None, sfc_param=None, ml_param=None,
-                      levelist=None):
-    product_type = '%s_%s_%s' % (PRODUCT_TYPE_BASE, expver, type)
-
-    marsclass = marsclass_for_exp(expver)
-    stream = stream_for_exp(expver)
+def _create_properties(ProductClass, model_date, expver='0001', type='fc', step=0, grid=None, sfc_param=None,
+                       ml_param=None, levelist=None):
+    product_type = "%s_%s_%s" % (ProductClass.product_type_base, expver, type)
+    marsclass = ProductClass.marsclass_for_exp(expver)
+    stream = ProductClass.stream_for_exp(expver)
     if grid is None:
-        grid = default_grid_for_exp(expver)
+        grid = ProductClass.default_grid_for_exp(expver)
     if isinstance(model_date, date) and not isinstance(model_date, datetime):
         model_date = datetime(model_date.year, model_date.month, model_date.day)
     if levelist is None:
-        levelist = default_levelist_for_exp(expver, model_date)
+        levelist = ProductClass.default_levelist_for_exp(expver, model_date)
     if sfc_param is None and ml_param is None:
-        sfc_param, ml_param = default_param_for_exp(expver, type)
+        sfc_param, ml_param = ProductClass.default_param_for_exp(expver, type)
 
     ecmwfmars = Struct()
     ecmwfmars.marsclass = marsclass
@@ -284,16 +236,71 @@ def create_properties(model_date, expver="0001", type="fc", step=0, grid=None, s
     return metadata
 
 
+def _exp_available(exp_availability, exp, model_datetime, strict=False):
+    if strict:
+        if exp_availability[exp][1].strip():
+            if model_datetime < datetime.strptime(exp_availability[exp][1], "%Y-%m-%dT%H:%M:%S"):
+                return False
+        if exp_availability[exp][2].strip():
+            if model_datetime > datetime.strptime(exp_availability[exp][2], "%Y-%m-%dT%H:%M:%S"):
+                return False
+    if model_datetime < datetime.strptime(exp_availability[exp][0], "%Y-%m-%dT%H:%M:%S"):
+        return False
+    if exp_availability[exp][3].strip():
+        if model_datetime > datetime.strptime(exp_availability[exp][3], "%Y-%m-%dT%H:%M:%S"):
+            return False
+    return True
+
+
 class CAMSProduct(object):
+    product_type_base = CAMS_PRODUCT_TYPE_BASE
+
+    @staticmethod
+    def create_properties(model_date, expver='0001', type='fc', step=0, grid=None, sfc_param=None,
+                          ml_param=None, levelist=None):
+        return _create_properties(CAMSProduct, model_date, expver, type, step, grid, sfc_param, ml_param, levelist)
+
+    @staticmethod
+    def exp_available(exp, model_datetime, strict=False):
+        return _exp_available(CAMS_EXP_AVAILABILITY, exp, model_datetime, strict)
+
+    @staticmethod
+    def marsclass_for_exp(exp):
+        if exp in CAMS_CONTROL_EXP_NAMES:
+            return 'rd'
+        return 'mc'
+
+    @staticmethod
+    def stream_for_exp(exp):
+        if exp == 'gzhy':
+            # this control run was not using the default stream
+            return 'lwda'
+        return 'oper'
+
+    @staticmethod
+    def default_grid_for_exp(exp):
+        return 'F256'
+
+    @staticmethod
+    def default_levelist_for_exp(exp, model_datetime):
+        if model_datetime <= datetime(2019, 7, 9):
+            return range(60)
+        return range(137)
+
+    @staticmethod
+    def default_param_for_exp(exp, type):
+        if type == 'an':
+            return CAMS_AN_SFC_PARAM, CAMS_AN_ML_PARAM
+        return CAMS_FC_SFC_PARAM, CAMS_FC_ML_PARAM
 
     def __init__(self, product_type):
         self.use_enclosing_directory = False
         self.use_hash = False
         self.hash_type = None
         self.product_type = product_type
-        _, model, exp_type = product_type.split('_')
+        product_type_base, model, exp_type = product_type.split('_')
         pattern = [
-            PRODUCT_TYPE_BASE,
+            product_type_base,
             r"_(?P<model>%s)" % model,
             r"(?P<creation_date>[\dT]{15})",
             r"(?P<type>%s)" % exp_type,
@@ -336,11 +343,56 @@ class CAMSProduct(object):
         pass
 
 
+class CAMSGHGProduct(CAMSProduct):
+    product_type_base = CAMSGHG_PRODUCT_TYPE_BASE
+
+    @staticmethod
+    def create_properties(model_date, expver='0001', type='fc', step=0, grid=None, sfc_param=None,
+                          ml_param=None, levelist=None):
+        return _create_properties(CAMSGHGProduct, model_date, expver, type, step, grid, sfc_param, ml_param, levelist)
+
+    @staticmethod
+    def exp_available(exp, model_datetime, strict=False):
+        return _exp_available(CAMSGHG_EXP_AVAILABILITY, exp, model_datetime, strict)
+
+    @staticmethod
+    def marsclass_for_exp(exp):
+        if exp in CAMSGHG_CONTROL_EXP_NAMES + CAMSGHG_AN_MC_EXP_NAMES + CAMSGHG_FC_MC_EXP_NAMES:
+            return 'rd'
+        return 'gg'
+
+    @staticmethod
+    def stream_for_exp(exp):
+        if exp in ['gznv', 'gqpe']:
+            # the first GHG forecast runs used 'lwda', all other GHG runs use 'oper'
+            return 'lwda'
+        return 'oper'
+
+    @staticmethod
+    def default_grid_for_exp(exp):
+        if exp in [CAMSGHG_FC_EXP_NAME] + CAMSGHG_FC_MC_EXP_NAMES:
+            return 'F640'
+        return 'F200'
+
+    @staticmethod
+    def default_levelist_for_exp(exp, model_datetime):
+        return range(137)
+
+    @staticmethod
+    def default_param_for_exp(exp, type):
+        # CAMS GHG control experiment uses 'an' parameter list
+        if exp in [CAMSGHG_AN_EXP_NAME] + CAMSGHG_AN_MC_EXP_NAMES + CAMSGHG_CONTROL_EXP_NAMES:
+            return None, CAMSGHG_AN_ML_PARAM
+        return None, CAMSGHG_FC_ML_PARAM
+
+
 def product_types():
-    return PRODUCT_TYPES
+    return CAMS_PRODUCT_TYPES + CAMSGHG_PRODUCT_TYPES
 
 
 def product_type_plugin(product_type):
-    if product_type in PRODUCT_TYPES:
+    if product_type in CAMS_PRODUCT_TYPES:
         return CAMSProduct(product_type=product_type)
+    if product_type in CAMSGHG_PRODUCT_TYPES:
+        return CAMSGHGProduct(product_type=product_type)
     return None
