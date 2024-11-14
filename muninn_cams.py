@@ -9,7 +9,7 @@ from muninn_ecmwfmars import get_core_properties as get_ecmwfmars_core_propertie
 EXP_TYPES = ['fc', 'an']
 
 CAMS_EXP_NAME = '0001'
-CAMS_CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b', 'hlqd', 'ht3q', 'hylz']
+CAMS_CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b', 'hlqd', 'ht3q', 'hylz', 'icki']
 CAMS_EXP_NAMES = [CAMS_EXP_NAME] + CAMS_CONTROL_EXP_NAMES
 
 CAMS_PRODUCT_TYPE_BASE = 'cams'
@@ -101,6 +101,7 @@ CAMS_EXP_AVAILABILITY = {
     #          switch to CY47R3 on 2021-10-12T12:00:00
     #          switch from Cray HPC to Atos HPC on 2022-10-18T12:00:00
     #          switch to CY48R1 on 2023-06-27T12:00:00
+    #          started with CY49R1 on 2024-11-12T12:00:00
     # Forecast-only experiments :
     'gjjh': ["2016-06-01T00:00:00", "                   ", "2017-01-23T00:00:00", "2017-03-26T00:00:00"],  # (CY41R1)
     'gnhb': ["2017-01-10T00:00:00", "2017-01-24T00:00:00", "2017-09-25T00:00:00", "2017-11-30T00:00:00"],  # (CY43R1)
@@ -111,12 +112,13 @@ CAMS_EXP_AVAILABILITY = {
     'hj7b': ["2020-11-01T00:00:00", "2021-05-19T00:00:00", "                   ", "2021-10-12T00:00:00"],  # (CY47R2)
     'hlqd': ["2021-03-02T00:00:00", "2021-10-13T00:00:00", "                   ", "2022-10-18T00:00:00"],  # (CY47R3)
     'ht3q': ["2022-04-30T00:00:00", "2022-10-19T00:00:00", "                   ", "2023-06-27T00:00:00"],  # (CY47R3)
-    'hylz': ["2022-09-01T00:00:00", "2023-06-28T00:00:00", "                   ", "                   "],  # (CY48R1)
+    'hylz': ["2022-09-01T00:00:00", "2023-06-28T00:00:00", "2024-11-12T00:00:00", "                   "],  # (CY48R1)
+    'icki': ["2023-06-01T00:00:00", "2024-11-13T00:00:00", "                   ", "                   "],  # (CY49R1)
 }
 
 CAMSGHG_FC_EXP_NAME = '0001'
 CAMSGHG_AN_EXP_NAME = '0011'
-CAMSGHG_CONTROL_EXP_NAMES = ['he9e', 'hllc', 'huet', 'iaiw']
+CAMSGHG_CONTROL_EXP_NAMES = ['he9e', 'hllc', 'huet', 'iaiw', 'iefz']
 CAMSGHG_AN_MC_EXP_NAMES = ['gqiq', 'gwx3', 'h72g', 'hd7v', 'hlkx', 'hues']  # old GHG models
 CAMSGHG_FC_MC_EXP_NAMES = ['gqpe', 'gznv', 'h9sp', 'he9h', 'hlld', 'hueu']  # old GHG models
 CAMSGHG_EXP_NAMES = [CAMSGHG_FC_EXP_NAME, CAMSGHG_AN_EXP_NAME] + CAMSGHG_CONTROL_EXP_NAMES + \
@@ -154,8 +156,12 @@ CAMSGHG_EXP_AVAILABILITY = {
     # See https://confluence.ecmwf.int/pages/viewpage.action?pageId=394237962
     # forecast experiment :
     '0001': ["2024-02-26T00:00:00", "2024-02-27T00:00:00", "                   ", "                   "],  # (CY48R1)
+    #          started with CY48R1
+    #          started with CY49R1 on 2024-11-12T12:00:00
     # analysis experiment :
     '0011': ["2024-02-18T00:00:00", "2024-02-27T00:00:00", "                   ", "                   "],  # (CY48R1)
+    #          started with CY48R1
+    #          started with CY49R1 on 2024-11-13T00:00:00
     # old forecast experiments :
     'gqpe': ["2017-01-01T00:00:00", "2017-11-01T00:00:00", "2018-11-30T00:00:00", "2018-12-31T00:00:00"],  # (CY43R1)
     'gznv': ["2018-06-01T00:00:00", "2018-12-01T00:00:00", "2019-08-31T00:00:00", "2019-12-31T00:00:00"],  # (CY45R1)
@@ -175,6 +181,7 @@ CAMSGHG_EXP_AVAILABILITY = {
     'hllc': ["2021-04-01T00:00:00", "2021-11-01T00:00:00", "2022-10-23T00:00:00", "2022-10-27T00:00:00"],  # (CY47R3)
     'huet': ["2022-09-15T00:00:00", "2022-10-24T00:00:00", "2024-02-26T00:00:00", "2024-02-29T00:00:00"],  # (CY47R3)
     'iaiw': ["2024-02-18T00:00:00", "2024-02-27T00:00:00", "                   ", "                   "],  # (CY48R1)
+    'iefz': ["2023-12-25T00:00:00", "2024-11-13T00:00:00", "                   ", "                   "],  # (CY49R1)
 }
 
 
