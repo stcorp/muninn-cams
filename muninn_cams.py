@@ -157,7 +157,7 @@ CAMSGHG_EXP_AVAILABILITY = {
     # forecast experiment :
     '0001': ["2024-02-26T00:00:00", "2024-02-27T00:00:00", "                   ", "                   "],
     #          started with CY48R1
-    #          started with CY49R1 on 2024-11-12T12:00:00
+    #          started with CY49R1 on 2024-11-13T00:00:00
     # analysis experiment :
     '0011': ["2024-02-18T00:00:00", "2024-02-27T00:00:00", "                   ", "                   "],
     #          started with CY48R1
