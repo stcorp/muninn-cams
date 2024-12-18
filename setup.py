@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="muninn-cams",
-    version="2.0",
+    version="2.1",
     description="Muninn extension for CAMS GRIB products from the ECMWF mars archive",
     url="https://github.com/stcorp/muninn-cams",
     author="S[&]T",
