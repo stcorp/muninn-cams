@@ -9,14 +9,15 @@ from muninn_ecmwfmars import get_core_properties as get_ecmwfmars_core_propertie
 EXP_TYPES = ['fc', 'an']
 
 CAMS_EXP_NAME = '0001'
-CAMS_CONTROL_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b', 'hlqd', 'ht3q', 'hylz', 'icki']
-CAMS_EXP_NAMES = [CAMS_EXP_NAME] + CAMS_CONTROL_EXP_NAMES
+CAMS_CONTROL_RD_EXP_NAMES = ['gjjh', 'gnhb', 'gsyg', 'gzhy', 'h7c4', 'hdir', 'hj7b', 'hlqd', 'ht3q', 'hylz', 'icki']
+CAMS_CONTROL_MC_EXP_NAMES = ['9180']
+CAMS_EXP_NAMES = [CAMS_EXP_NAME] + CAMS_CONTROL_MC_EXP_NAMES + CAMS_CONTROL_RD_EXP_NAMES
 
 CAMS_PRODUCT_TYPE_BASE = 'cams'
 CAMS_PRODUCT_TYPES = []
 CAMS_PRODUCT_TYPES.append("%s_%s_%s" % (CAMS_PRODUCT_TYPE_BASE, CAMS_EXP_NAME, 'fc'))
 CAMS_PRODUCT_TYPES.append("%s_%s_%s" % (CAMS_PRODUCT_TYPE_BASE, CAMS_EXP_NAME, 'an'))
-for _exp_name in CAMS_CONTROL_EXP_NAMES:
+for _exp_name in CAMS_CONTROL_MC_EXP_NAMES + CAMS_CONTROL_RD_EXP_NAMES:
     CAMS_PRODUCT_TYPES.append("%s_%s_%s" % (CAMS_PRODUCT_TYPE_BASE, _exp_name, 'fc'))
 
 CAMS_AN_SFC_PARAM = [
@@ -102,6 +103,7 @@ CAMS_EXP_AVAILABILITY = {
     #          switch from Cray HPC to Atos HPC on 2022-10-18T12:00:00
     #          switch to CY48R1 on 2023-06-27T12:00:00
     #          started with CY49R1 on 2024-11-12T12:00:00
+    #          started with CY50R1 on 2026-05-12T00:00:00
     # Forecast-only experiments :
     'gjjh': ["2016-06-01T00:00:00", "                   ", "2017-01-23T00:00:00", "2017-03-26T00:00:00"],  # (CY41R1)
     'gnhb': ["2017-01-10T00:00:00", "2017-01-24T00:00:00", "2017-09-25T00:00:00", "2017-11-30T00:00:00"],  # (CY43R1)
@@ -113,7 +115,8 @@ CAMS_EXP_AVAILABILITY = {
     'hlqd': ["2021-03-02T00:00:00", "2021-10-13T00:00:00", "                   ", "2022-10-18T00:00:00"],  # (CY47R3)
     'ht3q': ["2022-04-30T00:00:00", "2022-10-19T00:00:00", "                   ", "2023-06-27T00:00:00"],  # (CY47R3)
     'hylz': ["2022-09-01T00:00:00", "2023-06-28T00:00:00", "2024-11-12T00:00:00", "                   "],  # (CY48R1)
-    'icki': ["2023-06-01T00:00:00", "2024-11-13T00:00:00", "                   ", "                   "],  # (CY49R1)
+    'icki': ["2023-06-01T00:00:00", "2024-11-13T00:00:00", "2026-05-12T00:00:00", "                   "],  # (CY49R1)
+    '9180': ["2025-05-30T00:00:00", "2026-05-13T00:00:00", "                   ", "                   "],  # (CY50R1)
 }
 
 CAMSGHG_FC_EXP_NAME = '0001'
@@ -181,7 +184,7 @@ CAMSGHG_EXP_AVAILABILITY = {
     'hllc': ["2021-04-01T00:00:00", "2021-11-01T00:00:00", "2022-10-23T00:00:00", "2022-10-27T00:00:00"],  # (CY47R3)
     'huet': ["2022-09-15T00:00:00", "2022-10-24T00:00:00", "2024-02-26T00:00:00", "2024-02-29T00:00:00"],  # (CY47R3)
     'iaiw': ["2024-02-18T00:00:00", "2024-02-27T00:00:00", "2024-11-08T00:00:00", "2024-11-27T00:00:00"],  # (CY48R1)
-    'iefz': ["2023-12-25T00:00:00", "2024-11-09T00:00:00", "                   ", "                   "],  # (CY49R1)
+    'iefz': ["2023-12-25T00:00:00", "2024-11-09T00:00:00", "2026-05-08T00:00:00", "2026-05-19T00:00:00"],  # (CY49R1)
 }
 
 
@@ -274,7 +277,7 @@ class CAMSProduct(object):
 
     @staticmethod
     def marsclass_for_exp(exp):
-        if exp in CAMS_CONTROL_EXP_NAMES:
+        if exp in CAMS_CONTROL_RD_EXP_NAMES:
             return 'rd'
         return 'mc'
 
